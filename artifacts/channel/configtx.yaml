@@ -349,7 +349,7 @@ Profiles:
                 <<: *ApplicationCapabilities
 
     BidChannel:
-        Consortium: BidConsortium
+        Consortium: SampleConsortium
         <<: *ChannelDefaults
         Application:
             <<: *ApplicationDefaults
@@ -405,9 +405,4 @@ Profiles:
                 - *Gov
                 - *Bidder
                 - *Bank
-
-            BidConsortium:
-                Organizations:
-                - *Gov
-                - *Bidder
 
