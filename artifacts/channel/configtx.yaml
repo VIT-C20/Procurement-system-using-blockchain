@@ -136,7 +136,7 @@ Organizations:
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
             - Host: peer0.bank.tendersys.com
-              Port: 12051
+              Port: 13051
 
 ################################################################################
 #

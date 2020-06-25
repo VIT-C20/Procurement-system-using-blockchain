@@ -50,7 +50,7 @@ PeerOrgs:
     EnableNodeOUs: true
 
     Template:
-      Count: 2
+      Count: 4
       # Start: 5
       # Hostname: {{.Prefix}}{{.Index}} # default
       SANS:
