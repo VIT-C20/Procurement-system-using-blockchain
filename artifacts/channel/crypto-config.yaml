@@ -15,6 +15,14 @@ OrdererOrgs:
         SANS:
             - "localhost"
             - "127.0.0.1"
+      # - Hostname: orderer2
+      #   SANS:
+      #     - "localhost"
+      #     - "127.0.0.1"
+      # - Hostname: orderer3
+      #   SANS:
+      #       - "localhost"
+      #       - "127.0.0.1"
 
 # ---------------------------------------------------------------------------
 # "PeerOrgs" - Definition of organizations managing peer nodes
@@ -23,20 +31,6 @@ PeerOrgs:
   # ---------------------------------------------------------------------------
   # Org1
   # ---------------------------------------------------------------------------
-  - Name: Gov
-    Domain: gov.tendersys.com
-    EnableNodeOUs: true
-
-    Template:
-      Count: 4
-      # Start: 5
-      # Hostname: {{.Prefix}}{{.Index}} # default
-      SANS:
-        - "localhost"
-
-    Users:
-      Count: 1
-
   - Name: Bidder
     Domain: bidder.tendersys.com
     EnableNodeOUs: true
@@ -49,7 +43,21 @@ PeerOrgs:
         - "localhost"
 
     Users:
-      Count: 5
+      Count: 1
+
+  - Name: Gov
+    Domain: gov.tendersys.com
+    EnableNodeOUs: true
+
+    Template:
+      Count: 2
+      # Start: 5
+      # Hostname: {{.Prefix}}{{.Index}} # default
+      SANS:
+        - "localhost"
+
+    Users:
+      Count: 1
 
   - Name: Bank
     Domain: bank.tendersys.com
@@ -63,4 +71,4 @@ PeerOrgs:
         - "localhost"
 
     Users:
-      Count: 0
+      Count: 1

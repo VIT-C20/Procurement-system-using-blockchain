@@ -35,41 +35,6 @@ Organizations:
                 Type: Signature
                 Rule: "OR('OrdererMSP.admin')"
 
-    - &Gov
-        # DefaultOrg defines the organization which is used in the sampleconfig
-        # of the fabric.git development environment
-        Name: GovMSP
-
-        # ID to load the MSP definition as
-        ID: GovMSP
-
-        MSPDir: crypto-config/peerOrganizations/gov.tendersys.com/msp
-
-        # Policies defines the set of policies at this level of the config tree
-        # For organization policies, their canonical path is usually
-        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
-        Policies:
-            Readers:
-                Type: Signature
-                Rule: "OR('GovMSP.admin', 'GovMSP.peer', 'GovMSP.client')"
-            Writers:
-                Type: Signature
-                Rule: "OR('GovMSP.admin', 'GovMSP.client')"
-            Admins:
-                Type: Signature
-                Rule: "OR('GovMSP.admin')"
-            Endorsement:
-                Type: Signature
-                Rule: "OR('GovMSP.peer')"
-
-        # leave this flag set to true.
-        AnchorPeers:
-            # AnchorPeers defines the location of peers which can be used
-            # for cross org gossip communication.  Note, this value is only
-            # encoded in the genesis block in the Application section context
-            - Host: peer0.gov.tendersys.com
-              Port: 7051
-
     - &Bidder
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
@@ -97,12 +62,47 @@ Organizations:
                 Type: Signature
                 Rule: "OR('BidderMSP.peer')"
 
+        # leave this flag set to true.
         AnchorPeers:
             # AnchorPeers defines the location of peers which can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
             - Host: peer0.bidder.tendersys.com
-              Port: 8051     #9051
+              Port: 7051
+
+    - &Gov
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: GovMSP
+
+        # ID to load the MSP definition as
+        ID: GovMSP
+
+        MSPDir: crypto-config/peerOrganizations/gov.tendersys.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('GovMSP.admin', 'GovMSP.peer', 'GovMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('GovMSP.admin', 'GovMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('GovMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('GovMSP.peer')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.gov.tendersys.com
+              Port: 9051
 
     - &Bank
         # DefaultOrg defines the organization which is used in the sampleconfig
@@ -136,7 +136,7 @@ Organizations:
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
             - Host: peer0.bank.tendersys.com
-              Port: 9051
+              Port: 12051
 
 ################################################################################
 #
@@ -336,26 +336,26 @@ Channel: &ChannelDefaults
 ################################################################################
 Profiles:
 
-    BasicChannel:
-        Consortium: SampleConsortium
-        <<: *ChannelDefaults
-        Application:
-            <<: *ApplicationDefaults
-            Organizations:
-                - *Gov
-                - *Bidder
-                - *Bank
-            Capabilities:
-                <<: *ApplicationCapabilities
-
     BidChannel:
         Consortium: SampleConsortium
         <<: *ChannelDefaults
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *Gov
                 - *Bidder
+                - *Gov
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+    BasicChannel:
+        Consortium: SampleConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Bidder
+                - *Gov
+                - *Bank
             Capabilities:
                 <<: *ApplicationCapabilities
 
@@ -402,7 +402,6 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
-                - *Gov
                 - *Bidder
+                - *Gov
                 - *Bank
-
