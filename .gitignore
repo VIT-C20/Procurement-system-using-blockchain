@@ -162,3 +162,5 @@ artifacts/channel/create-certificate-with-ca/crypto-config-ca
 artifacts/channel/create-certificate-with-ca/fabric-ca
 artifacts/channel/crypto-config_1
 artifacts/channel/crypto-config_cryptogen
+
+tendersys.tar.gz

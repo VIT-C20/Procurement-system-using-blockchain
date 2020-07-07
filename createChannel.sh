@@ -5,8 +5,8 @@ export PEER0_ORG2_CA=${PWD}/artifacts/channel/crypto-config/peerOrganizations/go
 export PEER0_ORG3_CA=${PWD}/artifacts/channel/crypto-config/peerOrganizations/bank.tendersys.com/peers/peer0.bank.tendersys.com/tls/ca.crt
 export FABRIC_CFG_PATH=${PWD}/artifacts/channel/config/
 
-# export CHANNEL_NAME=bidchannel
-export CHANNEL_NAME=basicchannel
+export CHANNEL_NAME=bidchannel
+#export CHANNEL_NAME=basicchannel 
 
 setGlobalsForOrderer(){
     export CORE_PEER_LOCALMSPID="OrdererMSP"
@@ -106,32 +106,32 @@ joinChannel(){
     setGlobalsForPeer3Org2
     ./artifacts/channel/bin/peer channel join -b ./channel-artifacts/$CHANNEL_NAME.block
 
-    setGlobalsForPeer0Org3
-    ./artifacts/channel/bin/peer channel join -b ./channel-artifacts/$CHANNEL_NAME.block
+    # setGlobalsForPeer0Org3
+    # ./artifacts/channel/bin/peer channel join -b ./channel-artifacts/$CHANNEL_NAME.block
     
 }
 
 updateAnchorPeers(){
 
-    # setGlobalsForPeer0Org1
-    # ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/BidderMSPanchors_bidchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+     setGlobalsForPeer0Org1
+     ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/BidderMSPanchors_bidchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
     
-    # setGlobalsForPeer0Org2
-    # ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/GovMSPanchors_bidchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+     setGlobalsForPeer0Org2
+     ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/GovMSPanchors_bidchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
     
 
-    setGlobalsForPeer0Org1
-    ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/BidderMSPanchors_basicchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+    # setGlobalsForPeer0Org1
+    # ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/BidderMSPanchors_basicchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
     
-    setGlobalsForPeer0Org2
-    ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/GovMSPanchors_basicchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+    # setGlobalsForPeer0Org2
+    # ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/GovMSPanchors_basicchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
     
-    setGlobalsForPeer0Org3
-    ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/BankMSPanchors_basicchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+    # setGlobalsForPeer0Org3
+    # ./artifacts/channel/bin/peer channel update -o localhost:7050 --ordererTLSHostnameOverride orderer.tendersys.com -c $CHANNEL_NAME -f ./artifacts/channel/BankMSPanchors_basicchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
 }
 
 # removeOldCrypto
 
-# createChannel
-# joinChannel
+createChannel
+joinChannel
 updateAnchorPeers
