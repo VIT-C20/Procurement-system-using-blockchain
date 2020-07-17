@@ -17,9 +17,25 @@ import (
 type SmartContract struct {
 }
 
+// type Bidder struct {
+// 	Id string `json:"id"`
+// 	OrgName string `json:"orgName"`
+// }
+
 type Tender struct{
 	Id    string `json:"id"`
 	Title string `json:"title"`
+	OrgChain string `json:"orgChain"`
+	TenderRef string `json:"tenderRef"`
+	WorkDescription string `json:"workDescription"`
+	Location string `json:"locatiion"`
+	ProductCategory string `json:"productCategory"`
+	BidValidity string `json:"bidValidity"`
+	PeriodOfWork string `json:"periodOfWork"`
+	PublishDate string `json:"publishDate"`
+	BidSubmissionStartDate string `json:"bidSubmissionStartDate"`
+	BidSubmissionEndDate string `json:"bidSubmissionEndDate"`
+	BidResultDate string `json:"bidResultDate"`
 }
 
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -61,9 +77,22 @@ func (s *SmartContract) queryTender(APIstub shim.ChaincodeStubInterface, args []
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	
 	tenders := []Tender{
-		Tender{Id: "1", Title: "Tender1"},
-		Tender{Id: "2", Title: "Tender2"},
-		Tender{Id: "3", Title: "Tender3"},
+		Tender{
+			Id: "1", 
+			Title: "Enagement of agency for providing man power group c on job.........", 
+			OrgChain:"AIIMS Nagpur", 
+			TenderRef: "tender", 
+			WorkDescription: "Enagement of agency for providing man power group c on job.........",
+			Location: "Nagpur",
+			ProductCategory: "Man Power Supply",
+			BidValidity: "180 Days",
+			PeriodOfWork: "365 Days",
+			PublishDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			BidSubmissionStartDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			BidSubmissionEndDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			BidResultDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+		},
+		
 	}
 
 	i := 0

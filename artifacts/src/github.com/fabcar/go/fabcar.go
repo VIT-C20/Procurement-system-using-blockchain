@@ -19,25 +19,17 @@ type SmartContract struct {
 }
 
 // Car :  Define the car structure, with 4 properties.  Structure tags are used by encoding/json library
-/*
 type Car struct {
-	
 	Make   string `json:"make"`
 	Model  string `json:"model"`
 	Colour string `json:"colour"`
 	Owner  string `json:"owner"`
-	
-}*/
-
-type Tender struct{
-	Id    string `json:"id"`
-	Title string `json:"title"`
 }
-/*
+
 type carPrivateDetails struct {
 	Owner string `json:"owner"`
 	Price string `json:"price"`
-}*/
+}
 
 // Init ;  Method for initializing smart contract
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -54,15 +46,14 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	logger.Infof("Args length is : %d", len(args))
 
 	switch function {
-	case "queryTender":
-		return s.queryTender(APIstub, args)
+	case "queryCar":
+		return s.queryCar(APIstub, args)
 	case "initLedger":
 		return s.initLedger(APIstub)
-	case "createTender":
-		return s.createTender(APIstub, args)
-	case "queryAllTenders":
-		return s.queryAllTenders(APIstub)
-		/*
+	case "createCar":
+		return s.createCar(APIstub, args)
+	case "queryAllCars":
+		return s.queryAllCars(APIstub)
 	case "changeCarOwner":
 		return s.changeCarOwner(APIstub, args)
 	case "getHistoryForAsset":
@@ -86,7 +77,7 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	case "createPrivateCarImplicitForOrg2":
 		return s.createPrivateCarImplicitForOrg2(APIstub, args)
 	case "queryPrivateDataHash":
-		return s.queryPrivateDataHash(APIstub, args)*/
+		return s.queryPrivateDataHash(APIstub, args)
 	default:
 		return shim.Error("Invalid Smart Contract function name.")
 	}
@@ -94,16 +85,16 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	// return shim.Error("Invalid Smart Contract function name.")
 }
 
-func (s *SmartContract) queryTender(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) queryCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	tenderAsBytes, _ := APIstub.GetState(args[0])
-	return shim.Success(tenderAsBytes)
+	carAsBytes, _ := APIstub.GetState(args[0])
+	return shim.Success(carAsBytes)
 }
-/*
+
 func (s *SmartContract) readPrivateCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 2 {
@@ -157,10 +148,9 @@ func (s *SmartContract) test(APIstub shim.ChaincodeStubInterface, args []string)
 
 	carAsBytes, _ := APIstub.GetState(args[0])
 	return shim.Success(carAsBytes)
-}*/
+}
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	/*
 	cars := []Car{
 		Car{Make: "Toyota", Model: "Prius", Colour: "blue", Owner: "Tomoko"},
 		Car{Make: "Ford", Model: "Mustang", Colour: "red", Owner: "Brad"},
@@ -172,23 +162,18 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 		Car{Make: "Fiat", Model: "Punto", Colour: "violet", Owner: "Pari"},
 		Car{Make: "Tata", Model: "Nano", Colour: "indigo", Owner: "Valeria"},
 		Car{Make: "Holden", Model: "Barina", Colour: "brown", Owner: "Shotaro"},
-	}*/
-
-	tenders := []Tender{
-		Tender{Id: "1", Title: "Tender1"},
-		Tender{Id: "2", Title: "Tender2"},
 	}
 
 	i := 0
-	for i < len(tenders) {
-		tenderAsBytes, _ := json.Marshal(tenders[i])
-		APIstub.PutState("TENDER"+strconv.Itoa(i), tenderAsBytes)
+	for i < len(cars) {
+		carAsBytes, _ := json.Marshal(cars[i])
+		APIstub.PutState("CAR"+strconv.Itoa(i), carAsBytes)
 		i = i + 1
 	}
 
 	return shim.Success(nil)
 }
-/*
+
 func (s *SmartContract) createPrivateCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	type carTransientInput struct {
 		Make  string `json:"make"` //the fieldtags are needed to keep case from bouncing around
@@ -342,31 +327,30 @@ func (s *SmartContract) updatePrivateData(APIstub shim.ChaincodeStubInterface, a
 
 	return shim.Success(carPrivateDetailsAsBytes)
 
-}*/
+}
 
-func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) createCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 5 {
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 
-	//var car = Car{Make: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
-	var tender = Tender{Id: args[1], Title: args[2]}
-	
-	tenderAsBytes, _ := json.Marshal(tender)
-	APIstub.PutState(args[0], tenderAsBytes)
+	var car = Car{Make: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
+
+	carAsBytes, _ := json.Marshal(car)
+	APIstub.PutState(args[0], carAsBytes)
 
 	indexName := "owner~key"
-	colorNameIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{tender.Id, args[0]}) //car.Owner
+	colorNameIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{car.Owner, args[0]})
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 	value := []byte{0x00}
 	APIstub.PutState(colorNameIndexKey, value)
 
-	return shim.Success(tenderAsBytes)
+	return shim.Success(carAsBytes)
 }
-/*
+
 func (S *SmartContract) queryCarsByOwner(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 1 {
@@ -420,12 +404,12 @@ func (S *SmartContract) queryCarsByOwner(APIstub shim.ChaincodeStubInterface, ar
 	cars = append(cars, []byte("]")...)
 
 	return shim.Success(cars)
-}*/
+}
 
-func (s *SmartContract) queryAllTenders(APIstub shim.ChaincodeStubInterface) sc.Response {
+func (s *SmartContract) queryAllCars(APIstub shim.ChaincodeStubInterface) sc.Response {
 
-	startKey := "TENDER0"
-	endKey := "TENDER999"
+	startKey := "CAR0"
+	endKey := "CAR999"
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -460,12 +444,11 @@ func (s *SmartContract) queryAllTenders(APIstub shim.ChaincodeStubInterface) sc.
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- queryAllTenders:\n%s\n", buffer.String())
+	fmt.Printf("- queryAllCars:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }
 
-/*
 func (s *SmartContract) restictedMethod(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	// get an ID for the client which is guaranteed to be unique within the MSP
@@ -678,7 +661,7 @@ func (s *SmartContract) queryPrivateDataHash(APIstub shim.ChaincodeStubInterface
 // 	}
 
 // 	return shim.Success(nil)
-// }*/
+// }
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
 func main() {
