@@ -72,7 +72,7 @@ setGlobalsForPeer0Org3(){
 createChannel1(){
 	echo "-----------Channel 1 : Bid Channel------------"
 	
-    # rm -rf ./channel-artifacts/*
+    rm -rf ./channel-artifacts/*
     setGlobalsForPeer0Org1
     
     ./artifacts/channel/bin/peer channel create -o localhost:7050 -c $CHANNEL_NAME1 \

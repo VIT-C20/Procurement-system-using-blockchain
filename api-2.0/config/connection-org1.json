@@ -2,7 +2,7 @@
     "name": "first-network-org1",
     "version": "1.0.0",
     "client": {
-        "organization": "Org1",
+        "organization": "Bidder",
         "connection": {
             "timeout": {
                 "peer": {
@@ -12,45 +12,45 @@
         }
     },
     "organizations": {
-        "Org1": {
-            "mspid": "Org1MSP",
+        "Bidder": {
+            "mspid": "BidderMSP",
             "peers": [
-                "peer0.org1.example.com",
-                "peer1.org1.example.com"
+                "peer0.bidder.tendersys.com",
+                "peer1.bidder.tendersys.com"
             ],
             "certificateAuthorities": [
-                "ca.org1.example.com"
+                "ca.bidder.tendersys.com"
             ]
         }
     },
     "peers": {
-        "peer0.org1.example.com": {
+        "peer0.bidder.tendersys.com": {
             "url": "grpcs://localhost:7051",
             "tlsCACerts": {
-                "pem": "-----BEGIN CERTIFICATE-----\nMIICFzCCAb2gAwIBAgIUWuzg9o8ugs2XRHIRJaZ38S03y+QwCgYIKoZIzj0EAwIw\naDELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFicmljMRkwFwYDVQQDExBmYWJyaWMt\nY2Etc2VydmVyMB4XDTIwMDYxMzE3MjMwMFoXDTM1MDYxMDE3MjMwMFowaDELMAkG\nA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQKEwtIeXBl\ncmxlZGdlcjEPMA0GA1UECxMGRmFicmljMRkwFwYDVQQDExBmYWJyaWMtY2Etc2Vy\ndmVyMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOyNGSqkfwccBc8/oYdLAxr9V\naJ8EajLH8N0QPEOb9uf33qd83pINaZuoWDjmbTeNXWw9XzgvEfhU3HZupyZ7FaNF\nMEMwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQEwHQYDVR0OBBYE\nFAq65cSDSRx3g6ADSDmzt3a/cVoqMAoGCCqGSM49BAMCA0gAMEUCIQC7FCKnUAfR\nl/PdBXu23Fk+nX65k6p8jPd0RP4nitlpAwIgCcAI3aKwi0IeXASdvP3Id/lAQlun\njSF0Crn4i/8Uubg=\n-----END CERTIFICATE-----\n"
+                "pem": "-----BEGIN CERTIFICATE-----\nMIICaTCCAg6gAwIBAgIRAJtfkUBC6TcUTp7nNMy2irkwCgYIKoZIzj0EAwIwfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGJpZGRlci50ZW5kZXJzeXMuY29tMSMwIQYDVQQDExp0bHNjYS5iaWRkZXIudGVuZGVyc3lzLmNvbTAeFw0yMDA3MTcwOTU2MDBaFw0zMDA3MTUwOTU2MDBaMH4xCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMR0wGwYDVQQKExRiaWRkZXIudGVuZGVyc3lzLmNvbTEjMCEGA1UEAxMadGxzY2EuYmlkZGVyLnRlbmRlcnN5cy5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASukyIXW5KRmBx99IkszWyNauQZIkwPY9L2lUr+rQPoB919+nIKz4sId+F1Ecq2UlQzstmntekN6ceOIaHKzECao20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIEIHMt1c436k+eajixIXXQ6iJwTSFddOiVSd+nhCoo7B+cMAoGCCqGSM49BAMCA0kAMEYCIQDDq7s4qHjPCpq+vorzntqAzQfjhIOU0PVaJW+a2CByfwIhAMI1FyY5HPCOgSAioHe5gzCWxIMbaBHQlNwsVkmsi3Dl-----END CERTIFICATE-----\n"
             },
             "grpcOptions": {
-                "ssl-target-name-override": "peer0.org1.example.com",
-                "hostnameOverride": "peer0.org1.example.com"
+                "ssl-target-name-override": "peer0.bidder.tendersys.com",
+                "hostnameOverride": "peer0.bidder.tendersys.com"
             }
         },
-        "peer1.org1.example.com": {
+        "peer1.bidder.tendersys.com": {
             "url": "grpcs://localhost:8051",
             "tlsCACerts": {
-                "pem": "-----BEGIN CERTIFICATE-----\nMIICFzCCAb2gAwIBAgIUWuzg9o8ugs2XRHIRJaZ38S03y+QwCgYIKoZIzj0EAwIw\naDELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFic\nmljMRkwFwYDVQQDExBmYWJyaWMt\nY2Etc2VydmVyMB4XDTIwMDYxMzE3MjMwMFoXDTM1MDYxMDE3MjMwMFowaDELMAkG\nA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQKEwtIeXBl\ncmxlZGdl\ncjEPMA0GA1UECxMGRmFicmljMRkwFwYDVQQDExBmYWJyaWMtY2Etc2Vy\ndmVyMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOyNGSqkfwccBc8/oYdLAxr9V\naJ8EajLH8N0QPEOb9uf33qd83pINaZuoWDjmbTeNXWw9X\nzgvEfhU3HZupyZ7FaNF\nMEMwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQEwHQYDVR0OBBYE\nFAq65cSDSRx3g6ADSDmzt3a/cVoqMAoGCCqGSM49BAMCA0gAMEUCIQC7FCKnUAfR\nl/\nPdBXu23Fk+nX65k6p8jPd0RP4nitlpAwIgCcAI3aKwi0IeXASdvP3Id/lAQlun\njSF0Crn4i/8Uubg=\n-----END CERTIFICATE-----\n"
+                "pem": "-----BEGIN CERTIFICATE-----\nMIICaTCCAg6gAwIBAgIRAJtfkUBC6TcUTp7nNMy2irkwCgYIKoZIzj0EAwIwfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGJpZGRlci50ZW5kZXJzeXMuY29tMSMwIQYDVQQDExp0bHNjYS5iaWRkZXIudGVuZGVyc3lzLmNvbTAeFw0yMDA3MTcwOTU2MDBaFw0zMDA3MTUwOTU2MDBaMH4xCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMR0wGwYDVQQKExRiaWRkZXIudGVuZGVyc3lzLmNvbTEjMCEGA1UEAxMadGxzY2EuYmlkZGVyLnRlbmRlcnN5cy5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASukyIXW5KRmBx99IkszWyNauQZIkwPY9L2lUr+rQPoB919+nIKz4sId+F1Ecq2UlQzstmntekN6ceOIaHKzECao20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIEIHMt1c436k+eajixIXXQ6iJwTSFddOiVSd+nhCoo7B+cMAoGCCqGSM49BAMCA0kAMEYCIQDDq7s4qHjPCpq+vorzntqAzQfjhIOU0PVaJW+a2CByfwIhAMI1FyY5HPCOgSAioHe5gzCWxIMbaBHQlNwsVkmsi3Dl-----END CERTIFICATE-----\n"
             },
             "grpcOptions": {
-                "ssl-target-name-override": "peer1.org1.example.com",
-                "hostnameOverride": "peer1.org1.example.com"
+                "ssl-target-name-override": "peer1.bidder.tendersys.com",
+                "hostnameOverride": "peer1.bidder.tendersys.com"
             }
         }
     },
     "certificateAuthorities": {
-        "ca.org1.example.com": {
+        "ca.bidder.tendersys.com": {
             "url": "https://localhost:7054",
-            "caName": "ca.org1.example.com",
+            "caName": "ca.bidder.tendersys.com",
             "tlsCACerts": {
-                "pem": "-----BEGIN CERTIFICATE-----\nMIICFzCCAb2gAwIBAgIUWuzg9o8ugs2XRHIRJaZ38S03y+QwCgYIKoZIzj0EAwIw\naDELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFicmljMRkwFwYDVQQDExBmYWJyaWMt\nY2Etc2VydmVyMB4XDTIwMDYxMzE3MjMwMFoXDTM1MDYxMDE3MjMwMFowaDELMAkG\nA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQKEwtIeXBl\ncmxlZGdlcjEPMA0GA1UECxMGRmFicmljMRkwFwYDVQQDExBmYWJyaWMtY2Etc2Vy\ndmVyMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOyNGSqkfwccBc8/oYdLAxr9V\naJ8EajLH8N0QPEOb9uf33qd83pINaZuoWDjmbTeNXWw9XzgvEfhU3HZupyZ7FaNF\nMEMwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQEwHQYDVR0OBBYE\nFAq65cSDSRx3g6ADSDmzt3a/cVoqMAoGCCqGSM49BAMCA0gAMEUCIQC7FCKnUAfR\nl/PdBXu23Fk+nX65k6p8jPd0RP4nitlpAwIgCcAI3aKwi0IeXASdvP3Id/lAQlun\njSF0Crn4i/8Uubg=\n-----END CERTIFICATE-----\n"
+                "pem": "-----BEGIN CERTIFICATE-----\nMIICaTCCAg6gAwIBAgIRAJtfkUBC6TcUTp7nNMy2irkwCgYIKoZIzj0EAwIwfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGJpZGRlci50ZW5kZXJzeXMuY29tMSMwIQYDVQQDExp0bHNjYS5iaWRkZXIudGVuZGVyc3lzLmNvbTAeFw0yMDA3MTcwOTU2MDBaFw0zMDA3MTUwOTU2MDBaMH4xCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMR0wGwYDVQQKExRiaWRkZXIudGVuZGVyc3lzLmNvbTEjMCEGA1UEAxMadGxzY2EuYmlkZGVyLnRlbmRlcnN5cy5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASukyIXW5KRmBx99IkszWyNauQZIkwPY9L2lUr+rQPoB919+nIKz4sId+F1Ecq2UlQzstmntekN6ceOIaHKzECao20wazAOBgNVHQ8BAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMA8GA1UdEwEB/wQFMAMBAf8wKQYDVR0OBCIEIHMt1c436k+eajixIXXQ6iJwTSFddOiVSd+nhCoo7B+cMAoGCCqGSM49BAMCA0kAMEYCIQDDq7s4qHjPCpq+vorzntqAzQfjhIOU0PVaJW+a2CByfwIhAMI1FyY5HPCOgSAioHe5gzCWxIMbaBHQlNwsVkmsi3Dl-----END CERTIFICATE-----\n"
             },
             "httpOptions": {
                 "verify": false

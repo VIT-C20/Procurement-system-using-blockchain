@@ -12,25 +12,25 @@ const util = require('util');
 
 const getCCP = async (org) => {
     let ccpPath;
-    if (org == "Org1") {
+    if (org == "Bidder") {
         ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
 
-    } else if (org == "Org2") {
+    } else if (org == "Gov") {
         ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org2.json');
     } else
         return null
-    const ccpJSON = fs.readFileSync(ccpPath, 'utf8')
+    const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
     const ccp = JSON.parse(ccpJSON);
     return ccp
 }
 
 const getCaUrl = async (org, ccp) => {
     let caURL ;
-    if (org == "Org1") {
-        caURL = ccp.certificateAuthorities['ca.org1.example.com'].url;
+    if (org == "Bidder") {
+        caURL = ccp.certificateAuthorities['ca.bidder.tendersys.com'].url;
 
-    } else if (org == "Org2") {
-        caURL = ccp.certificateAuthorities['ca.org2.example.com'].url;
+    } else if (org == "Gov") {
+        caURL = ccp.certificateAuthorities['ca.gov.tendersys.com'].url;
     } else
         return null
     return caURL
@@ -39,11 +39,11 @@ const getCaUrl = async (org, ccp) => {
 
 const getWalletPath = async (org) => {
     let walletPath;
-    if (org == "Org1") {
-        walletPath = path.join(process.cwd(), 'org1-wallet');
+    if (org == "Bidder") {
+        walletPath = path.join(process.cwd(), 'bidder-wallet');
 
-    } else if (org == "Org2") {
-        walletPath = path.join(process.cwd(), 'org2-wallet');
+    } else if (org == "Gov") {
+        walletPath = path.join(process.cwd(), 'gov-wallet');
     } else
         return null
     return walletPath
@@ -52,16 +52,16 @@ const getWalletPath = async (org) => {
 
 
 const getAffiliation = async (org) => {
-    return org == "Org1" ? 'org1.department1' : 'org2.department1'
+    return org == "Bidder" ? 'org1.department1' : 'org2.department1'
 }
 
 const getRegisteredUser = async (username, userOrg, isJson) => {
-    let ccp = await getCCP(userOrg)
+    let ccp = await getCCP(userOrg);
 
-    const caURL = await getCaUrl(userOrg, ccp)
+    const caURL = await getCaUrl(userOrg, ccp);
     const ca = new FabricCAServices(caURL);
 
-    const walletPath = await getWalletPath(userOrg)
+    const walletPath = await getWalletPath(userOrg);
     const wallet = await Wallets.newFileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
@@ -101,22 +101,22 @@ const getRegisteredUser = async (username, userOrg, isJson) => {
     // const enrollment = await ca.enroll({ enrollmentID: username, enrollmentSecret: secret, attr_reqs: [{ name: 'role', optional: false }] });
 
     let x509Identity;
-    if (userOrg == "Org1") {
+    if (userOrg == "Bidder") {
         x509Identity = {
             credentials: {
                 certificate: enrollment.certificate,
                 privateKey: enrollment.key.toBytes(),
             },
-            mspId: 'Org1MSP',
+            mspId: 'BidderMSP',
             type: 'X.509',
         };
-    } else if (userOrg == "Org2") {
+    } else if (userOrg == "Gov") {
         x509Identity = {
             credentials: {
                 certificate: enrollment.certificate,
                 privateKey: enrollment.key.toBytes(),
             },
-            mspId: 'Org2MSP',
+            mspId: 'GovMSP',
             type: 'X.509',
         };
     }
@@ -134,11 +134,11 @@ const getRegisteredUser = async (username, userOrg, isJson) => {
 
 const getCaInfo = async (org, ccp) => {
     let caInfo
-    if (org == "Org1") {
-        caInfo = ccp.certificateAuthorities['ca.org1.example.com'];
+    if (org == "Bidder") {
+        caInfo = ccp.certificateAuthorities['ca.bidder.tendersys.com'];
 
-    } else if (org == "Org2") {
-        caInfo = ccp.certificateAuthorities['ca.org2.example.com'];
+    } else if (org == "Gov") {
+        caInfo = ccp.certificateAuthorities['ca.gov.tendersys.com'];
     } else
         return null
     return caInfo
@@ -151,7 +151,7 @@ const enrollAdmin = async (org, ccp) => {
 
     try {
 
-        const caInfo = await getCaInfo(org, ccp) //ccp.certificateAuthorities['ca.org1.example.com'];
+        const caInfo = await getCaInfo(org, ccp) //ccp.certificateAuthorities['ca.org1.tendersys.com'];
         const caTLSCACerts = caInfo.tlsCACerts.pem;
         const ca = new FabricCAServices(caInfo.url, { trustedRoots: caTLSCACerts, verify: false }, caInfo.caName);
 
@@ -170,22 +170,22 @@ const enrollAdmin = async (org, ccp) => {
         // Enroll the admin user, and import the new identity into the wallet.
         const enrollment = await ca.enroll({ enrollmentID: 'admin', enrollmentSecret: 'adminpw' });
         let x509Identity;
-        if (org == "Org1") {
+        if (org == "Bidder") {
             x509Identity = {
                 credentials: {
                     certificate: enrollment.certificate,
                     privateKey: enrollment.key.toBytes(),
                 },
-                mspId: 'Org1MSP',
+                mspId: 'BidderMSP',
                 type: 'X.509',
             };
-        } else if (org == "Org2") {
+        } else if (org == "Gov") {
             x509Identity = {
                 credentials: {
                     certificate: enrollment.certificate,
                     privateKey: enrollment.key.toBytes(),
                 },
-                mspId: 'Org2MSP',
+                mspId: 'GovMSP',
                 type: 'X.509',
             };
         }

@@ -167,4 +167,5 @@ tendersys.tar.gz
 artifacts/src/github.com/tendersys/go/vendor
 artifacts/src/github.com/tendersys/go/go.sum
 
-
+api-2.0/bidder-wallet
+api-2.0/gov-wallet
