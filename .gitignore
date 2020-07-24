@@ -145,7 +145,7 @@ channel-artifacts/mychannel.block
 config_update_in_envelope.json
 config_update.json
 config_update.pb
-config.json
+
 log.txt
 modified_config.json
 modified_config.pb
@@ -169,3 +169,7 @@ artifacts/src/github.com/tendersys/go/go.sum
 
 api-2.0/bidder-wallet
 api-2.0/gov-wallet
+api-1.4/node_modules
+api-1.4/crypto
+api-1.4/fabric-client-kv-bidder
+api-1.4/fabric-client-kv-gov
