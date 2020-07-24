@@ -55,6 +55,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryTender(APIstub, args)
 	case "initLedger":
 		return s.initLedger(APIstub)
+	case "createTender":
+		return s.createTender(APIstub, args)
 	case "queryAllTenders":
 		return s.queryAllTenders(APIstub)
 	default:
@@ -85,12 +87,12 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 			WorkDescription: "Enagement of agency for providing man power group c on job.........",
 			Location: "Nagpur",
 			ProductCategory: "Man Power Supply",
-			BidValidity: "180 Days",
-			PeriodOfWork: "365 Days",
-			PublishDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			BidSubmissionStartDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			BidSubmissionEndDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			BidResultDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			BidValidity: "180_Days",
+			// PeriodOfWork: "365 Days",
+			// PublishDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			// BidSubmissionStartDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			// BidSubmissionEndDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			// BidResultDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
 		},
 		
 	}
@@ -148,6 +150,37 @@ func (s *SmartContract) queryAllTenders(APIstub shim.ChaincodeStubInterface) sc.
 	return shim.Success(buffer.Bytes())
 }
 
+func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 8 {
+		return shim.Error("Incorrect number of arguments. Expecting 5")
+	}
+
+	// var tender = Tender{Title: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
+
+	var tender = Tender{
+		Title: args[1],
+		OrgChain: args[2],
+		TenderRef: args[3],
+		WorkDescription: args[4],
+		Location: args[5],
+		ProductCategory: args[6],
+		BidValidity: args[7],
+	}
+
+	tenderAsBytes, _ := json.Marshal(tender)
+	APIstub.PutState(args[0], tenderAsBytes)
+
+	indexName := "owner~key"
+	colorNameIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{tender.OrgChain, args[0]})
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	value := []byte{0x00}
+	APIstub.PutState(colorNameIndexKey, value)
+
+	return shim.Success(tenderAsBytes)
+}
 
 func main() {
 
