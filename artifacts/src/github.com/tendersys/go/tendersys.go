@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	//"time"
+	"time"
 
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	sc "github.com/hyperledger/fabric-protos-go/peer"
@@ -36,6 +36,7 @@ type Tender struct{
 	BidSubmissionStartDate string `json:"bidSubmissionStartDate"`
 	BidSubmissionEndDate string `json:"bidSubmissionEndDate"`
 	BidResultDate string `json:"bidResultDate"`
+	WinnerBidder string `json:"winnerBidder"`
 }
 
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -59,6 +60,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.createTender(APIstub, args)
 	case "queryAllTenders":
 		return s.queryAllTenders(APIstub)
+	case "changeTenderDetail":
+		return s.changeTenderDetail(APIstub, args)
+	case "getHistoryForAsset":
+		return s.getHistoryForAsset(APIstub, args)
 	default:
 		return shim.Error("Invalid Smart Contract function name.")
 	}
@@ -88,11 +93,11 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 			Location: "Nagpur",
 			ProductCategory: "Man Power Supply",
 			BidValidity: "180_Days",
-			// PeriodOfWork: "365 Days",
-			// PublishDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			// BidSubmissionStartDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			// BidSubmissionEndDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			// BidResultDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			PeriodOfWork: "365 Days",
+			PublishDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			BidSubmissionStartDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			BidSubmissionEndDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			BidResultDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
 		},
 		
 	}
@@ -105,6 +110,24 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	}
 
 	return shim.Success(nil)
+}
+
+func (s *SmartContract) changeTenderDetail(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	tenderAsBytes, _ := APIstub.GetState(args[0])
+	tender := Tender{}
+
+	json.Unmarshal(tenderAsBytes, &tender)
+	tender.WinnerBidder = args[1]
+
+	tenderAsBytes, _ = json.Marshal(tender)
+	APIstub.PutState(args[0], tenderAsBytes)
+
+	return shim.Success(tenderAsBytes)
 }
 
 func (s *SmartContract) queryAllTenders(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -180,6 +203,69 @@ func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args [
 	APIstub.PutState(colorNameIndexKey, value)
 
 	return shim.Success(tenderAsBytes)
+}
+
+func (t *SmartContract) getHistoryForAsset(stub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) < 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	tenderKey := args[0]
+
+	resultsIterator, err := stub.GetHistoryForKey(tenderKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	// buffer is a JSON array containing historic values for the marble
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		response, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"TxId\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(response.TxId)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Value\":")
+		// if it was a delete operation on given key, then we need to set the
+		//corresponding value null. Else, we will write the response.Value
+		//as-is (as the Value itself a JSON marble)
+		if response.IsDelete {
+			buffer.WriteString("null")
+		} else {
+			buffer.WriteString(string(response.Value))
+		}
+
+		buffer.WriteString(", \"Timestamp\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"IsDelete\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(strconv.FormatBool(response.IsDelete))
+		buffer.WriteString("\"")
+
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+
+	fmt.Printf("- getHistoryForAsset returning:\n%s\n", buffer.String())
+
+	return shim.Success(buffer.Bytes())
 }
 
 func main() {
