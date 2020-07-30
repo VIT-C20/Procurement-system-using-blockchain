@@ -175,8 +175,8 @@ func (s *SmartContract) queryAllTenders(APIstub shim.ChaincodeStubInterface) sc.
 
 func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 8 {
-		return shim.Error("Incorrect number of arguments. Expecting 5")
+	if len(args) != 11 {
+		return shim.Error("Incorrect number of arguments. Expecting 11")
 	}
 
 	// var tender = Tender{Title: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
@@ -189,6 +189,9 @@ func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args [
 		Location: args[5],
 		ProductCategory: args[6],
 		BidValidity: args[7],
+		BidSubmissionStartDate: args[8],
+		BidSubmissionEndDate: args[9],
+		PublishDate: args[10],
 	}
 
 	tenderAsBytes, _ := json.Marshal(tender)
