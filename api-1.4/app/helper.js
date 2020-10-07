@@ -1,7 +1,7 @@
 'use strict';
 var log4js = require('log4js');
 var logger = log4js.getLogger('Helper');
-logger.setLevel('DEBUG');
+// logger.setLevel('DEBUG');
 
 var path = require('path');
 var util = require('util');
@@ -10,7 +10,7 @@ var hfc = require('fabric-client');
 hfc.setLogger(logger);
 
 async function getClientForOrg(userorg, username) {
-	logger.debug('getClientForOrg - ****** START %s %s', userorg, username)
+	console.log('getClientForOrg - ****** START %s %s', userorg, username)
 	// get a fabric client loaded with a connection profile for this org
 	let config = '-connection-profile-path';
 
@@ -38,10 +38,10 @@ async function getClientForOrg(userorg, username) {
 		if (!user) {
 			throw new Error(util.format('User was not found :', username));
 		} else {
-			logger.debug('User %s was found to be registered and enrolled', username);
+			console.log('User %s was found to be registered and enrolled', username);
 		}
 	}
-	logger.debug('getClientForOrg - ****** END %s %s \n\n', userorg, username)
+	console.log('getClientForOrg - ****** END %s %s \n\n', userorg, username)
 
 	return client;
 }
@@ -102,7 +102,7 @@ var setupChaincodeDeploy = function () {
 
 var getLogger = function (moduleName) {
 	var logger = log4js.getLogger(moduleName);
-	logger.setLevel('DEBUG');
+	// logger.setLevel('DEBUG');
 	return logger;
 };
 

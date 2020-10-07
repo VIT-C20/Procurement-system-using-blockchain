@@ -17,11 +17,12 @@ var util = require('util');
 var helper = require('./helper.js');
 var logger = helper.getLogger('Query');
 
-var queryChaincode = async function (peer, channelName, chaincodeName, args, fcn, username, org_name) {
+var queryChaincode = async function (peer, channelName, chaincodeName, args, fcn) {
 	try {
+		console.log('inside query')
 		// first setup the client for this org
-		var client = await helper.getClientForOrg(org_name, username);
-		logger.debug('Successfully got the fabric client for the organization "%s"', org_name);
+		var client = await helper.getClientForOrg('Gov', 'admin');
+		console.log('Successfully got the fabric client for the organization "%s"', 'Gov');
 		var channel = client.getChannel(channelName);
 		if (!channel) {
 			let message = util.format('Channel %s was not defined in the connection profile', channelName);
@@ -31,7 +32,7 @@ var queryChaincode = async function (peer, channelName, chaincodeName, args, fcn
 
 		// send query
 		var request = {
-			targets: [peer], //queryByChaincode allows for multiple targets
+			targets: peer, //queryByChaincode allows for multiple targets
 			chaincodeId: chaincodeName,
 			fcn: fcn,
 			args: args
@@ -42,7 +43,7 @@ var queryChaincode = async function (peer, channelName, chaincodeName, args, fcn
 			return {
 				status: 500,
 				error: response_payloads[0].toString('utf8'),
-				successs: false
+				success: false
 			}
 		}
 
@@ -50,16 +51,16 @@ var queryChaincode = async function (peer, channelName, chaincodeName, args, fcn
 
 		if (response_payloads != '') {
 			for (let i = 0; i < response_payloads.length; i++) {
-				logger.info('Batch', args[0] + '=' + response_payloads[i].toString('utf8'));
+				console.log('Batch', args[0] + '=' + response_payloads[i].toString('utf8'));
 			}
 			// return a JSON Object as response  
 			return JSON.parse(response_payloads.toString('utf8'));
 		} else {
-			logger.error('response_payloads is null');
+			console.log('response_payloads is null');
 			throw new Error('response_payload is null')
 		}
 	} catch (error) {
-		logger.error('Failed to query due to error: ' + error.stack ? error.stack : error);
+		console.log('Failed to query due to error: ' + error.stack ? error.stack : error);
 		throw new Error(`${error.message}`);
 	}
 };
