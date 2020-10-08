@@ -1,0 +1,48 @@
+GET http://localhost:4000/tender/5f7f1914282d2b1eee90af9c HTTP/1.1
+
+###
+POST http://localhost:4000/users/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "ganesh",
+    "password": "12345678"
+}
+
+###
+POST http://localhost:4000/tender HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjdkZDQ5ZWNiNGVmMDU0ZGY5MGY0ODgiLCJpYXQiOjE2MDIxNjQxNTksImV4cCI6MTYwMjE3MTM1OX0.z23ZMcZOuIokZyBwNzm5W1cK-3Evfdw_DBvdr2AB4L4
+
+{
+    "tenderKey" : "TENDER05",
+    "title": "test Tender",
+    "status": "open",
+    "workDescription": "ex des",
+    "location": "mumbai",   
+    "productCategory": "ex category",
+    "bidValidity": "30 days",
+    "periodOfDate": "10/10/2020",
+    "publishDate": "10/10/2020",
+    "bidSubmissionStartDate": "10/10/2020",
+    "bidSubmissionEndDate":"10/10/2020",
+    "bidResultDate": "10/10/2020"
+}
+###
+POST http://localhost:4000/tender/5f7f1914282d2b1eee90af9c/applyBid HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjdmMWViYzI4MmQyYjFlZWU5MGFmOWQiLCJpYXQiOjE2MDIxNjY4MTMsImV4cCI6MTYwMjE3NDAxM30.Ct-OJtUqKHoQOq8Vx--c78HgLa0VEoAZix2XAhfslaA
+
+{
+    "bidDetails": "ex bid details",
+    "quotation": 23400
+}
+
+###
+PUT http://localhost:4000/tender/5f7f1914282d2b1eee90af9c/addWinnerBidder HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjdkZDQ5ZWNiNGVmMDU0ZGY5MGY0ODgiLCJpYXQiOjE2MDIxNjY5MTksImV4cCI6MTYwMjE3NDExOX0.dK1CW1bkSYCnKdQeFZ1zu4U_gZU50hR3_nhs6azyFJg
+
+{
+    "winnerBidderId": "5f7f2030282d2b1eee90af9e"
+}

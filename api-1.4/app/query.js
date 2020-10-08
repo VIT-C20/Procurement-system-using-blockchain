@@ -15,6 +15,7 @@
  */
 var util = require('util');
 var helper = require('./helper.js');
+const { response } = require('express');
 var logger = helper.getLogger('Query');
 
 var queryChaincode = async function (peer, channelName, chaincodeName, args, fcn) {
@@ -37,8 +38,9 @@ var queryChaincode = async function (peer, channelName, chaincodeName, args, fcn
 			fcn: fcn,
 			args: args
 		};
+		console.log(request)
 		let response_payloads = await channel.queryByChaincode(request);
-
+		console.log(response_payloads);
 		if (response_payloads[0].status == 500) {
 			return {
 				status: 500,

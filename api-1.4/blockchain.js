@@ -55,9 +55,9 @@ exports.mainInvokeChaincode = async (payload) => {
 		console.log('Org name  : ' + payload.orgName);
         console.log('channelName  : ' + payload.channelName);
 		console.log('chaincodeName : ' + payload.chaincodeName);
-		console.log('fcn  : ' + payload.fcn);
-        console.log('args  : ' + payload.args);
-
+		console.log('fcn  : \n' , payload.fcn);
+        console.log('args  : \n' , payload.args);
+		console.log('Peers :\n', payload.peers)
 		let message = await invoke.invokeChaincode(
             payload.peers,
             payload.channelName, 
@@ -96,11 +96,9 @@ exports.mainQueryChaincode = async (payload) => {
     console.log('chaincodeName : ' + payload.chaincodeName);
     console.log('fcn  : ' + payload.fcn);
     console.log('args  : ' + payload.args);
-    console.log('hello world1')
     // args = payload.args.replace(/'/g, '"');
 	// args = JSON.parse(args);
 	// console.log(args);
-	console.log('hello world2');
 	let message = await query.queryChaincode(payload.peers, payload.channelName, payload.chaincodeName, payload.args, payload.fcn);
 	console.log(message);
 	return message;
