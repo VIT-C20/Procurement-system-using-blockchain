@@ -34,12 +34,16 @@ const tenderSchema = new Schema({
         required: true
     },
     documents: [{
-        name: {
+        documentTitle: {
             type: String
         },
-        url: {
+        documentDescription: {
             type: String,
-            default: 'NA'
+            default: ''
+        },
+        documentLink: {
+            type: String,
+            default: ''
         }
     }],
     winnerBidder: { 

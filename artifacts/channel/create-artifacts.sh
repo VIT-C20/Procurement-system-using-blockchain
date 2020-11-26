@@ -31,17 +31,17 @@ echo "#######    Generating anchor peer update for Org1MSP  ##########"
 echo "#######    Generating anchor peer update for Org2MSP  ##########"
 ./bin/configtxgen -profile BidChannel -configPath . -outputAnchorPeersUpdate ./GovMSPanchors_bidchannel.tx -channelID $CHANNEL_NAME1 -asOrg GovMSP
 
-CHANNEL_NAME2="basicchannel"
+# CHANNEL_NAME2="basicchannel"
 
-echo $CHANNEL_NAME2
+# echo $CHANNEL_NAME2
 
-./bin/configtxgen -profile BasicChannel -configPath . -outputCreateChannelTx ./basicchannel.tx -channelID $CHANNEL_NAME2
+# ./bin/configtxgen -profile BasicChannel -configPath . -outputCreateChannelTx ./basicchannel.tx -channelID $CHANNEL_NAME2
 
-echo "#######    Generating anchor peer update for Org1MSP  ##########"
-./bin/configtxgen -profile BasicChannel -configPath . -outputAnchorPeersUpdate ./BidderMSPanchors_basicchannel.tx -channelID $CHANNEL_NAME2 -asOrg BidderMSP
+# echo "#######    Generating anchor peer update for Org1MSP  ##########"
+# ./bin/configtxgen -profile BasicChannel -configPath . -outputAnchorPeersUpdate ./BidderMSPanchors_basicchannel.tx -channelID $CHANNEL_NAME2 -asOrg BidderMSP
 
-echo "#######    Generating anchor peer update for Org2MSP  ##########"
-./bin/configtxgen -profile BasicChannel -configPath . -outputAnchorPeersUpdate ./GovMSPanchors_basicchannel.tx -channelID $CHANNEL_NAME2 -asOrg GovMSP
+# echo "#######    Generating anchor peer update for Org2MSP  ##########"
+# ./bin/configtxgen -profile BasicChannel -configPath . -outputAnchorPeersUpdate ./GovMSPanchors_basicchannel.tx -channelID $CHANNEL_NAME2 -asOrg GovMSP
 
-echo "#######    Generating anchor peer update for Org3MSP  ##########"
-./bin/configtxgen -profile BasicChannel -configPath . -outputAnchorPeersUpdate ./BankMSPanchors_basicchannel.tx -channelID $CHANNEL_NAME2 -asOrg BankMSP
+# echo "#######    Generating anchor peer update for Org3MSP  ##########"
+# ./bin/configtxgen -profile BasicChannel -configPath . -outputAnchorPeersUpdate ./BankMSPanchors_basicchannel.tx -channelID $CHANNEL_NAME2 -asOrg BankMSP

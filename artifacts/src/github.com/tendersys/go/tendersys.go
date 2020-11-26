@@ -22,20 +22,37 @@ type SmartContract struct {
 // 	OrgName string `json:"orgName"`
 // }
 
+type Document struct{
+	documentTitle string `json: "documentTitle"`
+	documentDescription string `json: "documentDescription"`
+	documentLink string `json: "documentLink"`
+}
+
 type Tender struct{
+	TenderKey string `json:"tenderKey"`
 	Id    string `json:"id"`
+	Status string `json:"status"`
+	BidCount string `json: "bidCount"`
+	Host string `json: "host"`
+	OrgChain string `json: "orgChain"`
+	TenderType string `json: "tenderType"`
+	TenderCategory string `json: "tenderCategory"`
+	PaymentMode string `json: "paymentMode"`
+	NoCovers string `json: "noCovers"`
+	TenderFee string `json: "tenderFee"`
+	FeePayableTo string `json: "feePayableTo"`
+	FeePayableAt string `json: "feePayableAt"`
 	Title string `json:"title"`
-	OrgChain string `json:"orgChain"`
-	TenderRef string `json:"tenderRef"`
 	WorkDescription string `json:"workDescription"`
-	Location string `json:"locatiion"`
 	ProductCategory string `json:"productCategory"`
 	BidValidity string `json:"bidValidity"`
 	PeriodOfWork string `json:"periodOfWork"`
-	PublishDate string `json:"publishDate"`
-	BidSubmissionStartDate string `json:"bidSubmissionStartDate"`
-	BidSubmissionEndDate string `json:"bidSubmissionEndDate"`
-	BidResultDate string `json:"bidResultDate"`
+	Location string `json:"locatiion"`
+	Pincode string `json: "pincode"`
+	BidOpeningDate string `json: "bidOpeningDate"`
+	BidClosingDate string `json: "bidClosingDate"`
+	ResultDate string `json: "resultDate"`
+	PublishDate string `json: "publishDate"`
 	WinnerBidder string `json:"winnerBidder"`
 }
 
@@ -85,19 +102,30 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	
 	tenders := []Tender{
 		Tender{
-			Id: "1", 
-			Title: "Enagement of agency for providing man power group c on job.........", 
-			OrgChain:"AIIMS Nagpur", 
-			TenderRef: "tender", 
-			WorkDescription: "Enagement of agency for providing man power group c on job.........",
-			Location: "Nagpur",
-			ProductCategory: "Man Power Supply",
-			BidValidity: "180_Days",
-			PeriodOfWork: "365 Days",
-			PublishDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			BidSubmissionStartDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			BidSubmissionEndDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
-			BidResultDate: "Wed Oct 05 2011 20:18:00 GMT+0530",
+			TenderKey : "TENDER0",
+			Id    : "123456789",
+			Status : "Open",
+			BidCount : "0",
+			Host : "1234exGovUserId",
+			OrgChain : "Central Water and Power Research Station",
+			TenderType : "Open Tender",
+			TenderCategory : "Works",
+			PaymentMode : "Offline",
+			NoCovers : "2",
+			TenderFee : "0.00",
+			FeePayableTo : "PAO CWPRS PUNE",
+			FeePayableAt : "Pune",
+			Title : "Maintenance and up keeping of day to day activities for Pakal Dul H E Physical model at CWPRS Pune24",
+			WorkDescription : "Maintenance and up keeping of day to day activities for Pakal Dul H E Physical model at CWPRS Pune24",
+			ProductCategory : "Civil Works",
+			BidValidity : "60",
+			PeriodOfWork : "365",
+			Location : "CWPRS Khadakwasla Pune",
+			Pincode : "411024",
+			BidOpeningDate : "03-Dec-2020 03:00 PM",
+			BidClosingDate : "14-Dec-2020 03:00 PM",
+			ResultDate : "15-Dec-2020 03:00 PM",
+			PublishDate : "26-Nov-2020 06:00 PM",
 		},
 		
 	}
@@ -175,26 +203,36 @@ func (s *SmartContract) queryAllTenders(APIstub shim.ChaincodeStubInterface) sc.
 
 func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 14 {
+	if len(args) != 24 {
 		return shim.Error("Incorrect number of arguments. Expecting 11")
 	}
 
 	// var tender = Tender{Title: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
 
 	var tender = Tender{
-		Id: args[1], 
-		Title: args[2], 
-		OrgChain: args[4], 
-		TenderRef: args[3], 
-		WorkDescription: args[5],
-		Location: args[6],
-		ProductCategory: args[7],
-		BidValidity: args[8],
-		PeriodOfWork: args[9],
-		PublishDate: args[10],
-		BidSubmissionStartDate: args[11],
-		BidSubmissionEndDate: args[12],
-		BidResultDate: args[13],
+		Id    : args[1],
+		Status : args[2],
+		BidCount : args[3],
+		Host : args[4],
+		OrgChain : args[5],
+		TenderType : args[6],
+		TenderCategory : args[7],
+		PaymentMode : args[8],
+		NoCovers : args[9],
+		TenderFee : args[10],
+		FeePayableTo : args[11],
+		FeePayableAt : args[12],
+		Title : args[13],
+		WorkDescription : args[14],
+		ProductCategory : args[15],
+		BidValidity : args[16],
+		PeriodOfWork : args[17],
+		Location : args[18],
+		Pincode : args[19],
+		BidOpeningDate : args[20],
+		BidClosingDate : args[21],
+		ResultDate : args[22],
+		PublishDate : args[23],
 	}
 
 	tenderAsBytes, _ := json.Marshal(tender)

@@ -1,4 +1,4 @@
-GET http://localhost:4000/tender/5f7f1914282d2b1eee90af9c HTTP/1.1
+GET http://localhost:4000/tender/ HTTP/1.1
 
 ###
 POST http://localhost:4000/users/login HTTP/1.1

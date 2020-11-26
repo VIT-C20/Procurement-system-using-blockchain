@@ -3,44 +3,40 @@ var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
 var licenseSchema = new Schema({
-    title: {
+    licenseTitle: {
         type: String,
         required: true
     },
-    issuedBy: {
+    licenseIssuedBy: {
         type: String,
         required: true
     },
-    issuedDate: {
+    licenseIssuedDate: {
         type: String,
         required: true
     },
-    expiryDate: {
+    licenseExpiryDate: {
         type: String,
         default: 'no expiry'
     },
-    url: {
+    licenseLink: {
         type: String,
     }
 });
 
 var workExpSchema = new Schema({
-    title: {
+    workTitle: {
         type: String,
         required: true
     },
-    description: {
+    workDescription: {
         type: String,
         default: ''
-    },
-    period: {
-        type: String,
-        required: true
     }
 })
 
 var User = new Schema({
-    email: {
+    companyEmail: {
         type: String,
         required: true,
         unique: true,
@@ -68,6 +64,42 @@ var User = new Schema({
         type: Boolean,
         default: false
     },
+    address: {
+        type: String,
+        default: ''
+    },
+    city: {
+        type: String,
+        default:''
+    },
+    state: {
+        type: String,
+        default: ''
+    },
+    postalCode: {
+        type: String,
+        default: ''
+    },
+    contactName: {
+        type: String,
+        default: ''
+    },
+    designation: {
+        type: String,
+        default: '',
+    },
+    contactNo: {
+        type: String,
+        default: ''
+    },
+    PANno: {
+        type: String,
+        default: ''
+    },
+    establishedDate: {
+        type: String,
+        default: ''
+    }
     // accessTender: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Tender'

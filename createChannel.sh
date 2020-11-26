@@ -1,3 +1,4 @@
+
 export CORE_PEER_TLS_ENABLED=true
 export ORDERER_CA=${PWD}/artifacts/channel/crypto-config/ordererOrganizations/tendersys.com/orderers/orderer.tendersys.com/msp/tlscacerts/tlsca.tendersys.com-cert.pem
 export PEER0_ORG1_CA=${PWD}/artifacts/channel/crypto-config/peerOrganizations/bidder.tendersys.com/peers/peer0.bidder.tendersys.com/tls/ca.crt
@@ -6,7 +7,7 @@ export PEER0_ORG3_CA=${PWD}/artifacts/channel/crypto-config/peerOrganizations/ba
 export FABRIC_CFG_PATH=${PWD}/artifacts/channel/config/
 
 export CHANNEL_NAME1=bidchannel
-export CHANNEL_NAME2=basicchannel 
+# export CHANNEL_NAME2=basicchannel 
 
 setGlobalsForOrderer(){
     export CORE_PEER_LOCALMSPID="OrdererMSP"
@@ -197,6 +198,6 @@ createChannel1
 joinChannel1
 updateAnchorPeers1
 
-createChannel2
-joinChannel2
-updateAnchorPeers2
+# createChannel2
+# joinChannel2
+# updateAnchorPeers2

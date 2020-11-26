@@ -1,3 +1,6 @@
+export GOPATH=/usr/local/go
+export PATH=$PATH:$GOPATH/bin
+
 export CORE_PEER_TLS_ENABLED=true
 export ORDERER_CA=${PWD}/artifacts/channel/crypto-config/ordererOrganizations/tendersys.com/orderers/orderer.tendersys.com/msp/tlscacerts/tlsca.tendersys.com-cert.pem
 export PEER0_ORG1_CA=${PWD}/artifacts/channel/crypto-config/peerOrganizations/bidder.tendersys.com/peers/peer0.bidder.tendersys.com/tls/ca.crt
@@ -297,7 +300,7 @@ chaincodeQueryAll(){
 # Run this function if you add any new dependency in chaincode
 # presetup
 
-packageChaincode
+# packageChaincode
 installChaincode
 queryInstalled
 approveForMyOrg1

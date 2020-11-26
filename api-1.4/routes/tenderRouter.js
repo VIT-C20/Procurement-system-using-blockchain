@@ -16,38 +16,38 @@ tenderRouter.options('*', cors.corsWithOptions, (req, res) => {
 // query all tender (WORKING)
 tenderRouter.get("/", cors.corsWithOptions, (req, res) => {
     // ================== Blockchain func >>>> mainQueryChaincode ================
-    var payload = {
-        chaincodeName: 'tendersys',
-        channelName: 'bidchannel',
-        args: ['TENDER0'],
-        peers: ['peer0.gov.tendersys.com'],
-        fcn: 'queryAllTenders'
-    };
-    blockchain.mainQueryChaincode(payload)
-    .then(blockchain_res => {
-        if(blockchain_res.success && blockchain_res.success === false) {
-            res.statusCode = 500;
-            res.setHeader("Content-Type", "application/json");
-            res.json(blockchain_res);
-        }
-        else {
-            res.status(200).json(blockchain_res);
-        }
-    })
-    .catch(err => res.status(500).json({error: 'Something went wrong! please try again'}));
+    // var payload = {
+    //     chaincodeName: 'tendersys',
+    //     channelName: 'bidchannel',
+    //     args: ['TENDER0'],
+    //     peers: ['peer0.gov.tendersys.com'],
+    //     fcn: 'queryAllTenders'
+    // };
+    // blockchain.mainQueryChaincode(payload)
+    // .then(blockchain_res => {
+    //     if(blockchain_res.success && blockchain_res.success === false) {
+    //         res.statusCode = 500;
+    //         res.setHeader("Content-Type", "application/json");
+    //         res.json(blockchain_res);
+    //     }
+    //     else {
+    //         res.status(200).json(blockchain_res);
+    //     }
+    // })
+    // .catch(err => res.status(500).json({error: 'Something went wrong! please try again'}));
 
     // ===========================================================================
 
     // ======================= For Testing ======================================= 
-    // Tender.find({}).populate('host')
-    //     .then(
-    //         tender => {
-    //         res.statusCode = 200;
-    //         res.setHeader("Content-Type", "application/json");
-    //         res.json(tender);
-    //         }
-    //     )
-    //     .catch(err => res.status(500).json({error: 'Something went wrong, please try again!'}));
+    Tender.find({}).populate('host')
+        .then(
+            tender => {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json(tender);
+            }
+        )
+        .catch(err => res.status(500).json({error: 'Something went wrong, please try again!'}));
     // ===========================================================================
 });
 

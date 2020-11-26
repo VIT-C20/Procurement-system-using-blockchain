@@ -25,62 +25,83 @@ router.get("/", cors.corsWithOptions, (req, res) => {
 });
 
 router.post("/signup", cors.corsWithOptions,  (req, res) => {
-  User.findOne({email: req.body.email})
-  .then(user => {
-    if(!user){
-      User.register(new User({email: req.body.email, username : req.body.username}), req.body.password, (err, user) => {
-        if (err) {
-          res.statusCode = 500;
-          res.setHeader("Content-Type", "application/json");
-          res.json({ err: err });
-        } else {
-          // =============add filed =============
-
-          if(req.body.orgName) user.orgName = req.body.orgName;
-          if(req.body.orgDescription) user.orgDescription = req.body.orgDescription;
-          // if(req.body.workExperience) user.workExperience = req.body.workExperience;
-          // if(req.body.licenses) user.licenses = req.body.licenses;
-          if(req.body.role) user.role = req.body.role;
-
-          // ===================================
-          user.save((err, user) => {
+  User.findOne({ companyEmail: req.body.companyEmail })
+    .then((user) => {
+      if (!user) {
+        User.register(
+          new User({
+            companyEmail: req.body.companyEmail,
+            username: req.body.username,
+          }),
+          req.body.password,
+          (err, user) => {
             if (err) {
               res.statusCode = 500;
               res.setHeader("Content-Type", "application/json");
               res.json({ err: err });
-              return;
+            } else {
+              // =============add filed =============
+
+              if (req.body.orgName) user.orgName = req.body.orgName;
+              if (req.body.orgDescription)
+                user.orgDescription = req.body.orgDescription;
+              if (req.body.workExperience)
+                user.workExperience = req.body.workExperience;
+              if (req.body.licenses) user.licenses = req.body.licenses;
+              if (req.body.role) user.role = req.body.role;
+              if (req.body.address) user.address = req.body.address;
+              if (req.body.city) user.city = req.body.city;
+              if (req.body.state) user.state = req.body.state;
+              if (req.body.postalCode) user.postalCode = req.body.postalCode;
+              if (req.body.contactName) user.contactName = req.body.contactName;
+              if (req.body.designation) user.designation = req.body.designation;
+              if (req.body.contactNo) user.contactNo = req.body.contactNo;
+              if (req.body.PANno) user.PANno = req.body.PANno;
+              if (req.body.establishedDate)
+                user.establishedDate = req.body.establishedDate;
+              // ===================================
+              user.save((err, user) => {
+                if (err) {
+                  res.statusCode = 500;
+                  res.setHeader("Content-Type", "application/json");
+                  res.json({ err: err });
+                  return;
+                }
+                let response;
+                // ============Blockchain func >>> mainBlockchainUser ==========
+                // blockchain.mainBlockchainUser(user.username, user.role)
+                //   .then(blockchain_res => {
+                //     // response = res;
+                //     res.statusCode = 200;
+                //     res.setHeader("Content-Type", "application/json");
+                //     res.json({ blockchain_res: {...blockchain_res},success: true, status: "Registration Successful!" });
+                //   })
+                //   .catch(err => console.log(err))
+                // =============================================================
+
+                passport.authenticate("local")(req, res, () => {
+                  res.statusCode = 200;
+                  res.setHeader("Content-Type", "application/json");
+                  res.json({
+                    blockchain_res: { ...response },
+                    success: true,
+                    status: "Registration Successful!",
+                  });
+                });
+              });
             }
-            let response;
-            // ============Blockchain func >>> mainBlockchainUser ==========
-            blockchain.mainBlockchainUser(user.username, user.role)
-              .then(blockchain_res => {
-                // response = res;
-                res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
-                res.json({ blockchain_res: {...blockchain_res},success: true, status: "Registration Successful!" });
-              })
-              .catch(err => console.log(err))
-            // =============================================================
-            
-            // passport.authenticate("local")(req, res, () => {
-            //   res.statusCode = 200;
-            //   res.setHeader("Content-Type", "application/json");
-            //   res.json({ blockchain_res: {...response},success: true, status: "Registration Successful!" });
-            // });
-          });
-        }
-      });
-    }
-    else {
-      res.status(400).json({error : 'Email is already in use'});
-    }
-  })
-  .catch(err => {
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.json({ error: 'Something went wrong, please try again!' });
-    return;
-  })
+          }
+        );
+      } else {
+        res.status(400).json({ error: "Email is already in use" });
+      }
+    })
+    .catch((err) => {
+      res.statusCode = 500;
+      res.setHeader("Content-Type", "application/json");
+      res.json({ error: "Something went wrong, please try again!" });
+      return;
+    });
 });
 
 router.post("/login", cors.corsWithOptions, (req, res, next) => {
@@ -101,7 +122,12 @@ router.post("/login", cors.corsWithOptions, (req, res, next) => {
         var token = authenticate.getToken({ _id: req.user._id });
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
-        res.json({ success: true, status: "Login successful!" , token: token});
+        res.json({
+          success: true,
+          status: "Login successful!",
+          token: token,
+          role: user.role,
+        });
     })
   }) (req,res, next);
 });
