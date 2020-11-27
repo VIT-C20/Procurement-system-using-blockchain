@@ -36,12 +36,12 @@ router.post("/signup", cors.corsWithOptions,  (req, res) => {
           req.body.password,
           (err, user) => {
             if (err) {
+              console.log(err)
               res.statusCode = 500;
               res.setHeader("Content-Type", "application/json");
               res.json({ err: err });
             } else {
               // =============add filed =============
-
               if (req.body.orgName) user.orgName = req.body.orgName;
               if (req.body.orgDescription)
                 user.orgDescription = req.body.orgDescription;
@@ -69,25 +69,25 @@ router.post("/signup", cors.corsWithOptions,  (req, res) => {
                 }
                 let response;
                 // ============Blockchain func >>> mainBlockchainUser ==========
-                // blockchain.mainBlockchainUser(user.username, user.role)
-                //   .then(blockchain_res => {
-                //     // response = res;
-                //     res.statusCode = 200;
-                //     res.setHeader("Content-Type", "application/json");
-                //     res.json({ blockchain_res: {...blockchain_res},success: true, status: "Registration Successful!" });
-                //   })
-                //   .catch(err => console.log(err))
+                blockchain.mainBlockchainUser(user.username, user.role)
+                  .then(blockchain_res => {
+                    // response = res;
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.json({ blockchain_res: {...blockchain_res},success: true, status: "Registration Successful!" });
+                  })
+                  .catch(err => console.log(err))
                 // =============================================================
 
-                passport.authenticate("local")(req, res, () => {
-                  res.statusCode = 200;
-                  res.setHeader("Content-Type", "application/json");
-                  res.json({
-                    blockchain_res: { ...response },
-                    success: true,
-                    status: "Registration Successful!",
-                  });
-                });
+                // passport.authenticate("local")(req, res, () => {
+                //   res.statusCode = 200;
+                //   res.setHeader("Content-Type", "application/json");
+                //   res.json({
+                //     blockchain_res: { ...response },
+                //     success: true,
+                //     status: "Registration Successful!",
+                //   });
+                // });
               });
             }
           }
@@ -310,7 +310,7 @@ router.delete('/licenses/:licenseId', cors.corsWithOptions, authenticate.verifyU
     })
 })
 
-router.delete('experience/:expId', cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+router.delete('/experience/:expId', cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
   User.findById(req.user._id)
     .then(user => {
       const exp = user.workExperience.id(req.params.expId);
