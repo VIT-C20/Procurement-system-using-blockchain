@@ -73,7 +73,7 @@ tenderRouter.get('/:tenderId', cors.corsWithOptions, (req, res) => {
                             res.json(blockchain_res);
                         }
                         else {
-                            res.status(200).json(blockchain_res);
+                            res.status(200).json({...blockchain_res, bidCount: tender.bidCount, documents: tender.documents, tenderKey: tender.tenderKey});
                         }
                     })
                 }
@@ -184,18 +184,28 @@ tenderRouter.post('/', cors.corsWithOptions, authenticate.verifyGov, (req, res) 
                             args: new Array(
                                 req.body.tenderKey,     
                                 tender._id.toString(),  
-                                req.body.title,   
-                                "tender",    
-                                req.user.orgName,    
-                                req.body.workDescription,    
-                                req.body.location,   
+                                req.body.status,
+                                '0',
+                                req.user._id.toString(),
+                                req.body.orgChain,
+                                req.body.tenderType,
+                                req.body.tenderCategory,
+                                req.body.paymentMode,
+                                req.body.noCovers,
+                                req.body.tenderFee,
+                                req.body.feePayableTo,
+                                req.body.feePayableAt,
+                                req.body.title,
+                                req.body.workDescription,
                                 req.body.productCategory,
                                 req.body.bidValidity,
-                                req.body.periodOfDate,
-                                req.body.publishDate,
-                                req.body.bidSubmissionStartDate,
-                                req.body.bidSubmissionEndDate,
-                                req.body.bidResultDate
+                                req.body.periodOfWork,
+                                req.body.location,
+                                req.body.pincode,
+                                req.body.bidOpeningDate,
+                                req.body.bidClosingDate,
+                                req.body.resultDate,
+                                (new Date()).toISOString()
                             )
                         }
                         // ==========================================================
@@ -320,5 +330,110 @@ tenderRouter.post('/:tenderId/applyBid', cors.corsWithOptions, authenticate.veri
         })
         .catch(err => res.status(404).json({error: 'Tender not found'}));
 })
+
+tenderRouter.post('/:tenderId/addDocument', cors.corsWithOptions, authenticate.verifyGov, (req, res) => {
+    Tender.findById(req.params.tenderId)
+        .then((tender) => {
+            if (tender != null) {
+                tender.documents = tender.documents.concat(req.body);
+                tender.save()
+                    .then((tender) => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json(tender);
+                    })
+            }
+            else {
+                res.status(403).json({ error: 'Tender Not Found' })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(403).json({ error: 'Something went Wrong!!' })
+        })
+})
+
+tenderRouter.delete('/:tenderId/documents/:documentId', cors.corsWithOptions, authenticate.verifyGov, (req, res) => {
+    Tender.findById(req.params.tenderId)
+        .then(tender => {
+            const documents = tender.documents.id(req.params.documentId);
+            if (documents) {
+                documents.remove();
+                tender.save()
+                    .then(tender => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json(tender);
+                    })
+            }
+            else {
+                res.status(403).json({ error: 'Tender Not Found' })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(403).json({ error: 'Something went Wrong!!' })
+        })
+})
+
+tenderRouter.put("/:tenderId", cors.corsWithOptions, authenticate.verifyGov, (req, res) => {
+    Tender.findById(req.params.tenderId)
+    .then(tender => {
+        
+        let payload = {
+            username: req.user.username,
+            orgName: req.user.role,
+            fcn: "changeTenderDetail",
+            peers: ["peer0.bidder.tendersys.com", "peer0.gov.tendersys.com"],
+            chaincodeName: "tendersys",
+            channelName: "bidchannel",
+            args: [
+                tender.tenderKey,
+                tender.bidCount.toString(),
+                req.body.tenderStatus,
+                req.body.tenderType,
+                req.body.tenderCategory,
+                req.body.paymentMode,
+                req.body.noCovers,
+                req.body.tenderFee,
+                req.body.feePayableTo,
+                req.body.feePayableAt,
+                req.body.title,
+                req.body.workDescription,
+                req.body.productCategory,
+                req.body.bidValidity,
+                req.body.periodOfWork,
+                req.body.location,
+                req.body.pincode,
+                req.body.bidOpeningDate,
+                req.body.bidClosingDate,
+                req.body.resultDate,
+            ]
+        }
+        blockchain.mainInvokeChaincode(payload)
+        .then(blockchain_res => {
+            // res.status(200).json(blockchain_res)
+            if (blockchain_res.success) {
+                if (req.body.title || req.body.tenderStaus) {
+                    if (req.body.title) tender.title = req.body.title
+                    if (req.body.tenderStaus) tender.status = req.body.tenderStaus;
+                    tender.save()
+                        .then(tender => {
+                            res.status(200).json({ tender, blockchain_res });
+                        })
+                }
+                else {
+                    res.status(200).json({ tender, blockchain_res });
+                }
+            }
+            else {
+                console.log(blockchain_res)
+                res.status(500).json({ tender, blockchain_res });
+            }
+        })
+        .catch(err => console.log(err))
+    })
+    .catch(err => res.status(404).json({error : 'tender not found'}))
+});
 
 module.exports = tenderRouter;

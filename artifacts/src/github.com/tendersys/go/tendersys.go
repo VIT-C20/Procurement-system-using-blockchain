@@ -30,7 +30,7 @@ type Document struct{
 
 type Tender struct{
 	TenderKey string `json:"tenderKey"`
-	Id    string `json:"id"`
+	Id  string `json:"id"`
 	Status string `json:"status"`
 	BidCount string `json: "bidCount"`
 	Host string `json: "host"`
@@ -103,7 +103,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	tenders := []Tender{
 		Tender{
 			TenderKey : "TENDER0",
-			Id    : "123456789",
+			Id : "123456789",
 			Status : "Open",
 			BidCount : "0",
 			Host : "1234exGovUserId",
@@ -140,7 +140,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	return shim.Success(nil)
 }
 
-func (s *SmartContract) changeTenderDetail(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) addWinnerBidder(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
@@ -151,6 +151,44 @@ func (s *SmartContract) changeTenderDetail(APIstub shim.ChaincodeStubInterface, 
 
 	json.Unmarshal(tenderAsBytes, &tender)
 	tender.WinnerBidder = args[1]
+
+	tenderAsBytes, _ = json.Marshal(tender)
+	APIstub.PutState(args[0], tenderAsBytes)
+
+	return shim.Success(tenderAsBytes)
+}
+
+func (s *SmartContract) changeTenderDetail(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 21 {
+		return shim.Error("Incorrect number of arguments. Expecting 20")
+	}
+
+	tenderAsBytes, _ := APIstub.GetState(args[0])
+	tender := Tender{}
+
+	json.Unmarshal(tenderAsBytes, &tender)
+	// tender.WinnerBidder = args[1]
+
+		tender.BidCount = args[1]
+		tender.Status = args[2]
+		tender.TenderType = args[3]
+		tender.TenderCategory = args[4]
+		tender.PaymentMode = args[5]
+		tender.NoCovers = args[6]
+		tender.TenderFee = args[7]
+		tender.FeePayableTo = args[8]
+		tender.FeePayableAt = args[9]
+		tender.Title = args[10]
+		tender.WorkDescription = args[11]
+		tender.ProductCategory = args[12]
+		tender.BidValidity = args[13]
+		tender.PeriodOfWork = args[14]
+		tender.Location = args[15]
+		tender.Pincode = args[16]
+		tender.BidOpeningDate = args[17]
+		tender.BidClosingDate = args[18]
+		tender.ResultDate = args[19]
 
 	tenderAsBytes, _ = json.Marshal(tender)
 	APIstub.PutState(args[0], tenderAsBytes)
@@ -210,7 +248,7 @@ func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args [
 	// var tender = Tender{Title: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
 
 	var tender = Tender{
-		Id    : args[1],
+		Id : args[1],
 		Status : args[2],
 		BidCount : args[3],
 		Host : args[4],
