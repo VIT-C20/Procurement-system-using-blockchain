@@ -20,12 +20,16 @@ const AppliedBidder = new Schema({
     },
     SupportingDocuments: [
         {
-            name: {
+            documentTitle: {
                 type: String
             },
-            url: {
+            documentDescription: {
                 type: String,
-                default: 'NA'
+                default: ''
+            },
+            documentLink: {
+                type: String,
+                default: ''
             }
         }
     ], 

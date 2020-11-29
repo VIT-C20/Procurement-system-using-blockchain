@@ -32,27 +32,28 @@ type Tender struct{
 	TenderKey string `json:"tenderKey"`
 	Id  string `json:"id"`
 	Status string `json:"status"`
-	BidCount string `json: "bidCount"`
-	Host string `json: "host"`
-	OrgChain string `json: "orgChain"`
-	TenderType string `json: "tenderType"`
-	TenderCategory string `json: "tenderCategory"`
-	PaymentMode string `json: "paymentMode"`
-	NoCovers string `json: "noCovers"`
-	TenderFee string `json: "tenderFee"`
-	FeePayableTo string `json: "feePayableTo"`
-	FeePayableAt string `json: "feePayableAt"`
+	BidCount string `json:"bidCount"`
+	Host string `json:"host"`
+	OrgChain string `json:"orgChain"`
+	TenderType string `json:"tenderType"`
+	TenderCategory string `json:"tenderCategory"`
+	PaymentMode string `json:"paymentMode"`
+	NoCovers string `json:"noCovers"`
+	TenderFee string `json:"tenderFee"`
+	FeePayableTo string `json:"feePayableTo"`
+	FeePayableAt string `json:"feePayableAt"`
 	Title string `json:"title"`
 	WorkDescription string `json:"workDescription"`
 	ProductCategory string `json:"productCategory"`
 	BidValidity string `json:"bidValidity"`
 	PeriodOfWork string `json:"periodOfWork"`
-	Location string `json:"locatiion"`
-	Pincode string `json: "pincode"`
-	BidOpeningDate string `json: "bidOpeningDate"`
-	BidClosingDate string `json: "bidClosingDate"`
-	ResultDate string `json: "resultDate"`
-	PublishDate string `json: "publishDate"`
+	Location string `json:"location"`
+	Pincode string `json:"pincode"`
+	BidOpeningDate string `json:"bidOpeningDate"`
+	BidClosingDate string `json:"bidClosingDate"`
+	ResultDate string `json:"resultDate"`
+	PublishDate string `json:"publishDate"`
+	WinningBid string `json:"winningBid"`
 	WinnerBidder string `json:"winnerBidder"`
 }
 
@@ -79,6 +80,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryAllTenders(APIstub)
 	case "changeTenderDetail":
 		return s.changeTenderDetail(APIstub, args)
+	case "addWinnerBidder":
+		return s.addWinnerBidder(APIstub, args)
 	case "getHistoryForAsset":
 		return s.getHistoryForAsset(APIstub, args)
 	default:
@@ -142,8 +145,8 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 
 func (s *SmartContract) addWinnerBidder(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
 	tenderAsBytes, _ := APIstub.GetState(args[0])
@@ -151,6 +154,7 @@ func (s *SmartContract) addWinnerBidder(APIstub shim.ChaincodeStubInterface, arg
 
 	json.Unmarshal(tenderAsBytes, &tender)
 	tender.WinnerBidder = args[1]
+	tender.WinningBid = args[2]
 
 	tenderAsBytes, _ = json.Marshal(tender)
 	APIstub.PutState(args[0], tenderAsBytes)
@@ -160,7 +164,7 @@ func (s *SmartContract) addWinnerBidder(APIstub shim.ChaincodeStubInterface, arg
 
 func (s *SmartContract) changeTenderDetail(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 21 {
+	if len(args) != 20 {
 		return shim.Error("Incorrect number of arguments. Expecting 20")
 	}
 
@@ -248,6 +252,7 @@ func (s *SmartContract) createTender(APIstub shim.ChaincodeStubInterface, args [
 	// var tender = Tender{Title: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
 
 	var tender = Tender{
+		TenderKey: args[0],
 		Id : args[1],
 		Status : args[2],
 		BidCount : args[3],

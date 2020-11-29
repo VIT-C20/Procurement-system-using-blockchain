@@ -127,6 +127,7 @@ router.post("/login", cors.corsWithOptions, (req, res, next) => {
           status: "Login successful!",
           token: token,
           role: user.role,
+          orgName: user.orgName
         });
     })
   }) (req,res, next);
