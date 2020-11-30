@@ -3,6 +3,7 @@ const tenderRouter = express.Router();
 const bodyParser = require("body-parser");
 const Tender = require("../models/tender");
 const AppliedBidder = require('../models/appliedBidder');
+const User = require("../models/user");
 const authenticate = require("../util/authenticate");
 const cors = require('../util/cors');
 var blockchain = require('../blockchain');
@@ -458,11 +459,11 @@ tenderRouter.get('/:tenderId/getBids', cors.corsWithOptions, authenticate.verify
         .catch(err => res.status(500).json('Something went wrong!!! Please try again'))
 })
 
-tenderRouter.get('/:tenderId/getBids/:bidId', cors.corsWithOptions, authenticate.verifyGov, (req, res) => {
+tenderRouter.get('/:tenderId/getBids/:bidId', cors.corsWithOptions,  (req, res) => {
     Tender.findById(req.params.tenderId)
         .then(tender => {
             if (tender) {
-                AppliedBidder.findById(req.params.bidId).populate('tender')
+                AppliedBidder.findById(req.params.bidId).populate('bidder')
                 .then(bid => {
                     res.status(200).json(bid)
                 })
@@ -472,6 +473,30 @@ tenderRouter.get('/:tenderId/getBids/:bidId', cors.corsWithOptions, authenticate
             }
         })
         .catch(err => res.status(500).json('Something went wrong!!! Please try again'))
+})
+
+tenderRouter.get('/myBids/:bidderId', cors.corsWithOptions, authenticate.verifyBidder, (req, res) => {
+    User.findById(req.params.bidderId)
+    .then(bidder => {
+        AppliedBidder.find({bidder: req.params.bidderId}).populate('bidder')
+        .then(bids => {
+            res.status(200).json(bids)
+        })
+    })
+    .catch(err => res.status(404).json({error: 'Bidder Not Found'}))
+})
+
+tenderRouter.get('/:bidderId/myBids/:bidId', cors.corsWithOptions, authenticate.verifyBidder, (req, res) => {
+    AppliedBidder.findById(req.params.bidId).populate('bidder')
+    .then(bid => {
+        if(req.params.bidderId === bid.bidder._id){
+            res.status(200).json(bid)
+        }
+        else{
+            res.status(401).json('Unauthorized')
+        }
+    })
+    .catch(err => res.status(404).json('Bid Not Found'))
 })
 
 tenderRouter.get('/getHistory/:tenderId', cors.corsWithOptions, (req, res) => {
