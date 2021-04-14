@@ -446,8 +446,7 @@ tenderRouter.get('/:tenderId/getBids', cors.corsWithOptions, authenticate.verify
                 if (tender.host.toString() === req.user._id.toString()) {
                     AppliedBidder.find({ tender: req.params.tenderId }).populate('bidder')
                         .then(biddersArr => {
-                            if (biddersArr.length === 0) res.status(200).json('No Bids');
-                            else res.status(200).json(biddersArr);
+                            res.status(200).json(biddersArr);
                         })
                 } else {
                     res.status(403).json('You are not authorized')
@@ -465,7 +464,7 @@ tenderRouter.get('/:tenderId/getBids/:bidId', cors.corsWithOptions,  (req, res) 
             if (tender) {
                 AppliedBidder.findById(req.params.bidId).populate('bidder')
                 .then(bid => {
-                    res.status(200).json(bid)
+                    res.status(200).json({bid, tender})
                 })
                 .catch(err => res.status(400).json({error: 'Bid not found'}))
             } else {

@@ -11,6 +11,7 @@ var invokeChaincode = async function (peerNames, channelName, chaincodeName, fcn
 	var tx_id_string = null;
 	try {
 		// first setup the client for this org
+		console.log(org_name, username)
 		var client = await helper.getClientForOrg(org_name, username);
 		console.log('Successfully got the fabric client for the organization "%s"', org_name);
 		var channel = client.getChannel(channelName);
