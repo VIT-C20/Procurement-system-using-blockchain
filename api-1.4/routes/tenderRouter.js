@@ -7,7 +7,7 @@ const User = require("../models/user");
 const authenticate = require("../util/authenticate");
 const cors = require('../util/cors');
 var blockchain = require('../blockchain');
-
+const bcrypt = require('bcryptjs')
 tenderRouter.use(bodyParser.json());
 
 
@@ -72,7 +72,7 @@ tenderRouter.get('/:tenderId', cors.corsWithOptions, (req, res) => {
                             res.statusCode = 500;
                             res.setHeader("Content-Type", "application/json");
                             res.json(blockchain_res);
-                        }
+                ``        }
                         else {
                             res.status(200).json({...blockchain_res, bidCount: tender.bidCount, documents: tender.documents, tenderKey: tender.tenderKey});
                         }
@@ -152,154 +152,209 @@ tenderRouter.post('/', cors.corsWithOptions, authenticate.verifyGov, (req, res) 
         res.status(500).json("Status Required!!!")
         return;
     }
-    
-    // TODO add more verification steps
 
-    var payload ={
-        tenderKey: req.body.tenderKey,
-        title: req.body.title,
-        host: req.user._id,
-        status: req.body.status
+    // OTP verification
+
+    if(!req.body.OTP) {
+        return res.status(400).json('OTP rewuired')
     }
-    if(req.body.documents) payload.documents = req.body.documents;
-    // =============================================================================
-    console.log(payload);
-    Tender.find({tenderKey: req.body.tenderKey})
-        .then(tender => {
-            if(tender.length !== 0) {
-                res.status(500).json('Tender key already in use!!');
-                return;
-            } 
-            else {
-                Tender.create(payload)
-                    .then(tender => {
-                        // ============== create payload ============================
-                        console.log("from mongodb",tender)
-                        var payloadForBlockchain = {
-                            username: req.user.username,
-                            orgName: req.user.role,
-                            fcn: "createTender",
-                            peers: ["peer0.bidder.tendersys.com", "peer0.gov.tendersys.com"],
-                            chaincodeName: "tendersys",
-                            channelName: "bidchannel",
-                            args: new Array(
-                                req.body.tenderKey,     
-                                tender._id.toString(),  
-                                req.body.status,
-                                '0',
-                                req.user._id.toString(),
-                                req.body.orgChain,
-                                req.body.tenderType,
-                                req.body.tenderCategory,
-                                req.body.paymentMode,
-                                req.body.noCovers,
-                                req.body.tenderFee,
-                                req.body.feePayableTo,
-                                req.body.feePayableAt,
-                                req.body.title,
-                                req.body.workDescription,
-                                req.body.productCategory,
-                                req.body.bidValidity,
-                                req.body.periodOfWork,
-                                req.body.location,
-                                req.body.pincode,
-                                req.body.bidOpeningDate,
-                                req.body.bidClosingDate,
-                                req.body.resultDate,
-                                (new Date()).toISOString()
-                            )
-                        }
-                        // ==========================================================
-                        // console.log(tender);
-                        // ================== Blockchain func >>>> mainInvokeChaincode ================
-                        blockchain.mainInvokeChaincode(payloadForBlockchain)
-                            .then(response => {
-                                console.log(response);
-                                if(response.success){
-                                    res.status(200).json({blockchain_res:{...response}});
-                                }else {
-                                    tender.remove()
-                                        .then(() => {
-                                            res.status(500).json({
-                                                blockchain_res: {...response},
-                                                error: 'Tender not added'
-                                            });
-                                        })
-                                }
-                            })
-                            .catch(err => console.log(err))
-                        // ============================================================================
-                        // res.status(200).json(tender);
-                    })
+    const OTP = req.body.OTP
+    User.findById(req.user._id)
+    .then(user => {
+        if(!user) {
+
+        }
+        if (user.expiryOTP > Date.now()) {
+            return bcrypt.compare(OTP, user.OTP)
+        }
+        else {
+            return res.status(400).json({error: 'OTP Expired'})
+        }
+    })
+    .then(isEqual => {
+        if (isEqual) {
+            // TODO add more verification steps
+        
+            var payload ={
+                tenderKey: req.body.tenderKey,
+                title: req.body.title,
+                host: req.user._id,
+                status: req.body.status
             }
-        })
-        .catch(err => res.status(500).json({error: 'Something went Wrong!!!'}));
+            if(req.body.documents) payload.documents = req.body.documents;
+            // =============================================================================
+            console.log(payload);
+            Tender.find({tenderKey: req.body.tenderKey})
+                .then(tender => {
+                    if(tender.length !== 0) {
+                        res.status(500).json('Tender key already in use!!');
+                        return;
+                    } 
+                    else {
+                        Tender.create(payload)
+                            .then(tender => {
+                                // ============== create payload ============================
+                                console.log("from mongodb",tender)
+                                var payloadForBlockchain = {
+                                    username: req.user.username,
+                                    orgName: req.user.role,
+                                    fcn: "createTender",
+                                    peers: ["peer0.bidder.tendersys.com", "peer0.gov.tendersys.com"],
+                                    chaincodeName: "tendersys",
+                                    channelName: "bidchannel",
+                                    args: new Array(
+                                        req.body.tenderKey,     
+                                        tender._id.toString(),  
+                                        req.body.status,
+                                        '0',
+                                        req.user._id.toString(),
+                                        req.body.orgChain,
+                                        req.body.tenderType,
+                                        req.body.tenderCategory,
+                                        req.body.paymentMode,
+                                        req.body.noCovers,
+                                        req.body.tenderFee,
+                                        req.body.feePayableTo,
+                                        req.body.feePayableAt,
+                                        req.body.title,
+                                        req.body.workDescription,
+                                        req.body.productCategory,
+                                        req.body.bidValidity,
+                                        req.body.periodOfWork,
+                                        req.body.location,
+                                        req.body.pincode,
+                                        req.body.bidOpeningDate,
+                                        req.body.bidClosingDate,
+                                        req.body.resultDate,
+                                        (new Date()).toISOString()
+                                    )
+                                }
+                                // ==========================================================
+                                // console.log(tender);
+                                // ================== Blockchain func >>>> mainInvokeChaincode ================
+                                blockchain.mainInvokeChaincode(payloadForBlockchain)
+                                    .then(response => {
+                                        console.log(response);
+                                        if(response.success){
+                                            res.status(200).json({blockchain_res:{...response}});
+                                        }else {
+                                            tender.remove()
+                                                .then(() => {
+                                                    res.status(500).json({
+                                                        blockchain_res: {...response},
+                                                        error: 'Tender not added'
+                                                    });
+                                                })
+                                        }
+                                    })
+                                    .catch(err => console.log(err))
+                                // ============================================================================
+                                // res.status(200).json(tender);
+                            })
+                    }
+                })
+        } else {
+            return res.status(404).json({error: 'OTP incorrect'})
+        }
+    })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ error: 'Something went Wrong!!!' })
+        });
 })
 // invoke tender
 tenderRouter.put('/:tenderId/addWinnerBidder', cors.corsWithOptions, authenticate.verifyGov, (req, res) => {
+    console.log(req.body)
     if(!req.body.winnerBidderId) {
         res.status(404).json({error: 'Winner Bidder Id required!!'})
         return;
     }
-    Tender.findById(req.params.tenderId)
-        .then(tender => {
-            if(tender) {
-                if(tender.host.toString() === req.user._id.toString()) {
-                    AppliedBidder.findById(req.body.winnerBidderId)
-                    .then(appliedBid => {
-                        // console.log(appliedBid);
-                        // res.status(200).json('ok')
-                        if(appliedBid) {
-                            let payload = {
-                                username: req.user.username,
-                                orgName: req.user.role,
-                                fcn: "addWinnerBidder",
-                                peers: ["peer0.bidder.tendersys.com", "peer0.gov.tendersys.com"],
-                                chaincodeName: "tendersys",
-                                channelName: "bidchannel",
-                                args: [
-                                    tender.tenderKey,
-                                    appliedBid.bidder.toString(),
-                                    req.body.winnerBidderId
-                                ]
-                            }
-                            // ================= Blockchain Func >>> mainInvokeChaincode =============
-                            blockchain.mainInvokeChaincode(payload)
-                            .then(blockchain_res => {
-                                // res.status(200).json(blockchain_res)
-                                if(blockchain_res.success) {
-                                    tender.winnerBidder = appliedBid._id;
-                                    tender.save()
-                                    .then(tender => {
-                                        res.status(200).json({tender, blockchain_res});
+    if (!req.body.OTP) { 
+        return res.status(400).json({error: 'OTP required'})
+    }
+
+    const OTP = req.body.OTP
+    User.findById(req.user._id)
+    .then(user => {
+        if(!user) {
+
+        }
+        if (user.expiryOTP > Date.now()) {
+            return bcrypt.compare(OTP, user.OTP)
+        }
+        else {
+            return res.status(400).json({error: 'OTP Expired'})
+        }
+    })
+    .then(isEqual => {
+        if (isEqual) {
+            Tender.findById(req.params.tenderId)
+                .then(tender => {
+                    if(tender) {
+                        if(tender.host.toString() === req.user._id.toString()) {
+                            AppliedBidder.findById(req.body.winnerBidderId)
+                            .then(appliedBid => {
+                                // console.log(appliedBid);
+                                // res.status(200).json('ok')
+                                if(appliedBid) {
+                                    let payload = {
+                                        username: req.user.username,
+                                        orgName: req.user.role,
+                                        fcn: "addWinnerBidder",
+                                        peers: ["peer0.bidder.tendersys.com", "peer0.gov.tendersys.com"],
+                                        chaincodeName: "tendersys",
+                                        channelName: "bidchannel",
+                                        args: [
+                                            tender.tenderKey,
+                                            appliedBid.bidder.toString(),
+                                            req.body.winnerBidderId
+                                        ]
+                                    }
+                                    // ================= Blockchain Func >>> mainInvokeChaincode =============
+                                    blockchain.mainInvokeChaincode(payload)
+                                    .then(blockchain_res => {
+                                        // res.status(200).json(blockchain_res)
+                                        if(blockchain_res.success) {
+                                            tender.winnerBidder = appliedBid._id;
+                                            tender.save()
+                                            .then(tender => {
+                                                res.status(200).json({tender, blockchain_res});
+                                            })
+                                        }
                                     })
+                                    .catch(err => console.log(err))
+                                    // =======================================================================
+        
+                                    // tender.winnerBidder = appliedBid._id;
+                                    // tender.save()
+                                    //     .then(tender => {
+                                    //         res.status(200).json(tender);
+                                    //     })
+                                }
+                                else{
+                                    res.status(404).json({error: 'invalid Bidder'});
                                 }
                             })
-                            .catch(err => console.log(err))
-                            // =======================================================================
-
-                            // tender.winnerBidder = appliedBid._id;
-                            // tender.save()
-                            //     .then(tender => {
-                            //         res.status(200).json(tender);
-                            //     })
                         }
-                        else{
-                            res.status(404).json({error: 'invalid Bidder'});
+                        else {
+                            res.status(500).json({error: 'You are not authorized'})
+                            return;
                         }
-                    })
-                }
-                else {
-                    res.status(500).json({error: 'You are not authorized'})
-                    return;
-                }
-            }
-            else {
-                res.status(404).json({error: 'Tender Not Found'})
-                return;
-            }
-        })
-        .catch(err => res.status(500).json({error: 'Something went wrong'}));
+                    }
+                    else {
+                        res.status(404).json({error: 'Tender Not Found'})
+                        return;
+                    }
+                })
+            
+        } else {
+            return res.status(400).json({error: 'OTP incorrect'})
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({error: 'Something went wrong'})
+    })
 })
 
 tenderRouter.post('/:tenderId/applyBid', cors.corsWithOptions, authenticate.verifyBidder, (req, res) => {
@@ -380,63 +435,87 @@ tenderRouter.delete('/:tenderId/documents/:documentId', cors.corsWithOptions, au
 })
 
 tenderRouter.put("/:tenderId", cors.corsWithOptions, authenticate.verifyGov, (req, res) => {
-    Tender.findById(req.params.tenderId)
-    .then(tender => {
-        
-        let payload = {
-            username: req.user.username,
-            orgName: req.user.role,
-            fcn: "changeTenderDetail",
-            peers: ["peer0.bidder.tendersys.com", "peer0.gov.tendersys.com"],
-            chaincodeName: "tendersys",
-            channelName: "bidchannel",
-            args: [
-                tender.tenderKey,
-                tender.bidCount.toString(),
-                req.body.status,
-                req.body.tenderType,
-                req.body.tenderCategory,
-                req.body.paymentMode,
-                req.body.noCovers,
-                req.body.tenderFee,
-                req.body.feePayableTo,
-                req.body.feePayableAt,
-                req.body.title,
-                req.body.workDescription,
-                req.body.productCategory,
-                req.body.bidValidity,
-                req.body.periodOfWork,
-                req.body.location,
-                req.body.pincode,
-                req.body.bidOpeningDate,
-                req.body.bidClosingDate,
-                req.body.resultDate,
-            ]
+    if (!req.body.OTP) {
+        return res.status(400).json({error: 'OTP required'})
+    }
+    const OTP = req.body.OTP
+    User.findById(req.user._id)
+    .then(user => {
+        if(!user) {
+            return res.status(404).json({error: 'user not found'})
         }
-        blockchain.mainInvokeChaincode(payload)
-        .then(blockchain_res => {
-            // res.status(200).json(blockchain_res)
-            if (blockchain_res.success) {
-                if (req.body.title || req.body.status) {
-                    if (req.body.title) tender.title = req.body.title
-                    if (req.body.status) tender.status = req.body.status;
-                    tender.save()
-                        .then(tender => {
-                            res.status(200).json({ tender, blockchain_res });
-                        })
-                }
-                else {
-                    res.status(200).json({ tender, blockchain_res });
-                }
-            }
-            else {
-                console.log(blockchain_res)
-                res.status(500).json({ tender, blockchain_res });
-            }
-        })
-        .catch(err => console.log(err))
+        if (user.expiryOTP > Date.now()) {
+            return bcrypt.compare(OTP, user.OTP)
+        }
+        else {
+            return res.status(400).json({error: 'OTP Expired'})
+        }
     })
-    .catch(err => res.status(404).json({error : 'tender not found'}))
+    .then(isEqual => {
+        if (isEqual) {
+            Tender.findById(req.params.tenderId)
+            .then(tender => {
+                let payload = {
+                    username: req.user.username,
+                    orgName: req.user.role,
+                    fcn: "changeTenderDetail",
+                    peers: ["peer0.bidder.tendersys.com", "peer0.gov.tendersys.com"],
+                    chaincodeName: "tendersys",
+                    channelName: "bidchannel",
+                    args: [
+                        tender.tenderKey,
+                        tender.bidCount.toString(),
+                        req.body.status,
+                        req.body.tenderType,
+                        req.body.tenderCategory,
+                        req.body.paymentMode,
+                        req.body.noCovers,
+                        req.body.tenderFee,
+                        req.body.feePayableTo,
+                        req.body.feePayableAt,
+                        req.body.title,
+                        req.body.workDescription,
+                        req.body.productCategory,
+                        req.body.bidValidity,
+                        req.body.periodOfWork,
+                        req.body.location,
+                        req.body.pincode,
+                        req.body.bidOpeningDate,
+                        req.body.bidClosingDate,
+                        req.body.resultDate,
+                    ]
+                }
+                blockchain.mainInvokeChaincode(payload)
+                .then(blockchain_res => {
+                    // res.status(200).json(blockchain_res)
+                    if (blockchain_res.success) {
+                        if (req.body.title || req.body.status) {
+                            if (req.body.title) tender.title = req.body.title
+                            if (req.body.status) tender.status = req.body.status;
+                            tender.save()
+                                .then(tender => {
+                                    res.status(200).json({ tender, blockchain_res });
+                                })
+                        }
+                        else {
+                            res.status(200).json({ tender, blockchain_res });
+                        }
+                    }
+                    else {
+                        console.log(blockchain_res)
+                        res.status(500).json({ tender, blockchain_res });
+                    }
+                })
+                .catch(err => console.log(err))
+            })
+        } else {
+            return res.status(400).json({error: 'incorrect OTP'})
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(404).json({ error: 'tender not found' })
+    })
 });
 
 tenderRouter.get('/:tenderId/getBids', cors.corsWithOptions, authenticate.verifyGov, (req, res) => {

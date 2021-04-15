@@ -1,5 +1,5 @@
 // ==========lib files===============
-
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -24,7 +24,7 @@ var auth = require('./util/authenticate');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var tenderRouer = require('./routes/tenderRouter');
-
+var otpRouter = require('./routes/otp');
 // ===================================
 
 //=========MongoDB Setup===========
@@ -82,7 +82,7 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tender', tenderRouer);
-
+app.use('/sendOTP', otpRouter)
 //====================================
 
 // catch 404 and forward to error handler

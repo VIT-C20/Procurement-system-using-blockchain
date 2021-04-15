@@ -334,4 +334,45 @@ router.delete('/experience/:expId', cors.corsWithOptions, authenticate.verifyUse
     })
 })
 
+// const nodemailer = require('nodemailer')
+// const bcrypt = require('bcryptjs')
+
+// var transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: process.env.SENDERMAIL,
+//     pass: process.env.PASSWORD
+//   }
+// })
+
+// router.get('/sendOTP', cors.corsWithOptions, async (req, res) => {
+//   try {
+//     console.log('in send otp')
+//     // res.status(200).json('hello')
+//     const user = await User.findById(req.user._id)
+//     if (!user) {
+//       console.log('here')
+//         return res.status(404).json({message: 'User not found'})
+//       }
+//     const OTP = Math.floor(100000 + Math.random() * 900000).toString()
+//     const hashedOTP = await bcrypt.hash(OTP, 12)
+//     user.OTP = hashedOTP
+//     user.expiryOTP = Date.now() + 600000
+//     await user.save()
+//     await transporter.sendMail({
+//       to: user.companyEmail,
+//       from: process.env.SENDERMAIL,
+//       subject: 'OTP Verification',
+//       html: `
+//         <h3>OTP: ${OTP}</h3>
+//         <h3>Valid for only 10 min.</h3>
+//       `
+//     })
+//     return res.status(200).json({message: 'OTP send to your registered company email'})
+//   }
+//   catch (err) {
+//     return res.status(400).json({message: 'Something went wrong'})
+//   }
+// })
+
 module.exports = router;

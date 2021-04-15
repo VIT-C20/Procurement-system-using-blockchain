@@ -99,6 +99,14 @@ var User = new Schema({
     establishedDate: {
         type: String,
         default: ''
+    },
+    OTP: {
+        type: String,
+        default: ''
+    },
+    expiryOTP: {
+        type: String,
+        default: ''
     }
     // accessTender: [{
     //     type: mongoose.Schema.Types.ObjectId,
